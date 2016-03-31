@@ -11,39 +11,9 @@ const {
 
 const history = hashHistory;
 
-/*
-*/
-
-const Home = React.createClass({
-  render(){
-    return (
-      <div className="container">
-        <div className="starter-template">
-          <h1>Bootstrap starter template</h1>
-          <p className="lead">Use this document as a way to quickly start any new project.<br/> All you get is this text and a mostly barebones HTML document.</p>
-        </div>
-      </div>
-    );
-  }
-});
-
-const About = React.createClass({
-  render(){
-    return (
-      <div>
-        <h1>About</h1>
-      </div>
-    );
-  }
-});
-
-const NoMatch = React.createClass({
-  render(){
-    return (
-      <h1>Page not found!</h1>
-    );
-  }
-});
+const Home = require('../pages/home');
+const About = require('../pages/about');
+const PageNotFound = require('../pages/notfound');
 
 const App = React.createClass({
   render(){
@@ -66,7 +36,7 @@ module.exports = React.createClass({
           <Route path="/" component={App}>
             <IndexRoute component={Home}/>
             <Route path="/about" component={About} />
-            <Route path="*" component={NoMatch} />
+            <Route path="*" component={PageNotFound} />
           </Route>
         </Router>
       </div>
