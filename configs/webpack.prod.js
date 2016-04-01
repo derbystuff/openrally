@@ -10,7 +10,7 @@ module.exports = {
   devtool: false,
   entry:   ["../web/src/app"],
   output:  {
-    path:          path.join(__dirname, "../web/site"),
+    path:          path.resolve(__dirname, "../web/src/app"),
     filename:      "app.js",
     chunkFilename: "[name].[id].js"
   },

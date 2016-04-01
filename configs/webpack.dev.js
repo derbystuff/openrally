@@ -8,9 +8,12 @@ module.exports = {
   context: __dirname,
   debug:   false,
   devtool: false,
-  entry:   ["../web/src/app"],
+  entry:   [
+    path.resolve(__dirname, "../web/src/app"),
+    'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr',
+  ],
   output:  {
-    path:          path.join(__dirname, "../web/site"),
+    path:          path.resolve(__dirname, "../web/site"),
     filename:      "app.js",
     chunkFilename: "[name].[id].js"
   },
@@ -23,11 +26,16 @@ module.exports = {
       hash: true,
       filename: 'index.html',
     }),
+    new webpack.HotModuleReplacementPlugin(),
   ],
   module:  {
     loaders: [
       {test: /\.json$/, loaders: ["json"]},
-      {test: /\.js$/, exclude: /node_modules/, loader: "babel-loader"},
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        loader: "babel-loader",
+      },
       {test: /\.less$/, loader: "style!css!less"},
       {test: /\.(png|woff|woff2|eot|ttf|svg)$/, loader: 'url-loader?limit=100000'},
     ],
@@ -46,5 +54,5 @@ module.exports = {
   node:    {
     __dirname: true,
     fs:        'empty'
-  }
+  },
 };
