@@ -36,6 +36,8 @@ module.exports = React.createClass({
           </Navbar.Brand>
         </Navbar.Header>
         <Nav>
+          <NavLink to="/racers">Racers</NavLink>
+          <NavLink to="/races">Races</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </Nav>
