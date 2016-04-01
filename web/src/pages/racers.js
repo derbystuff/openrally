@@ -1,11 +1,19 @@
 const React = require('react');
 
+const RacerListItem = React.createClass({
+  render(){
+    return (
+      <tr><td>Hello</td><td>Test 2</td></tr>
+    );
+  }
+});
+
 const RacersList = React.createClass({
   render(){
     return (
-      <div>
-        
-      </div>
+      <table>
+        <RacerListItem />
+      </table>
     );
   }
 });
