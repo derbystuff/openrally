@@ -28,11 +28,17 @@ module.exports = [
   {
     method: 'GET',
     path: '/health',
-    handler: statusHandler
+    config: {
+      tags: ['api'],
+      handler: statusHandler
+    }
   },
   {
     method: 'GET',
     path: '/status',
-    handler: statusHandler
+    config: {
+      tags: ['api'],
+      handler: statusHandler
+    }
   },
 ];
