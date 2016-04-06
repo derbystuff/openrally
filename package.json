@@ -7,7 +7,7 @@
     "racemaster": "./bin/racemaster"
   },
   "scripts": {
-    "dev": "nodemon ./bin/racemasterdev  --hot",
+    "dev": "rm -rf ./web/site/; nodemon ./bin/racemasterdev --hot",
     "test": "lab --transform ./test/setup.js --ignore 'Reflect,core,_babelPolyfill,regeneratorRuntime,__core-js_shared__'",
     "compile-ui": "NODE_ENV=production rm -rf web/site/; webpack --colors --display-error-details --config configs/webpack.client.js",
     "compile-server": "rm -rf dist/; babel -d dist/ lib/",
@@ -48,6 +48,7 @@
     "react-tap-event-plugin": "^0.2.2",
     "redux": "^3.3.1",
     "redux-thunk": "^2.0.1",
+    "serialport": "^2.0.6",
     "sift": "^3.2.1",
     "style-loader": "^0.13.1",
     "url-loader": "^0.5.7",

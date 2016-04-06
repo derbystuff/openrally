@@ -4,8 +4,7 @@ module.exports = React.createClass({
   render(){
     return (
       <div>
-        <h1>Races Listing</h1>
-        <p>Not done yet.</p>
+        <h1>View Racer {this.props.params.id}</h1>
       </div>
     );
   }

@@ -12,7 +12,9 @@ const RacersList = React.createClass({
   render(){
     return (
       <table>
-        <RacerListItem />
+        <tbody>
+          <RacerListItem />
+        </tbody>
       </table>
     );
   }
@@ -22,7 +24,7 @@ module.exports = React.createClass({
   render(){
     return (
       <div>
-        <h1>Racers</h1>
+        <h1>Racers Listing</h1>
         <p>Not done yet.</p>
         <RacersList />
       </div>
