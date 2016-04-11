@@ -11,6 +11,7 @@ const builder = new Builder({
   orm: {
     division: Joi.string().allow('ndr', 'aa', 'sk', 'test'),
     type: Joi.string().allow('double', 'single'),
+    count: Joi.number().optional(),
     version: Joi.string(),
     bracket: Joi.array().items(
       Joi.array().items(
