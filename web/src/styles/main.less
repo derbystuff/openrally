@@ -1,6 +1,7 @@
 @import "bootstrap/less/bootstrap";
 @import "variables";
 @import "bootswatch";
+@import "bracket";
 
 body {
 }
@@ -10,4 +11,25 @@ body {
 }
 .starter-template{
   text-align: center;
+}
+
+select{
+  color: black;
+}
+
+.timer-wrapper{
+  border: 1px solid silver;
+  background: black;
+  color: white;
+  display: inline-block;
+  margin: 0px;
+  padding: 1em;
+
+  .timer{
+    font-size: 4em;
+  }
+
+  .winner{
+    font-size: 1.25em;
+  }
 }

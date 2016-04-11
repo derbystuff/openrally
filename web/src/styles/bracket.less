@@ -1,0 +1,75 @@
+.bracket{
+  .rounds{
+    display: flex;
+    flex-direction: row;
+    .round{
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+
+      .spacer{
+        flex-grow: 1;
+      }
+      .spacer:first-child,
+      .spacer:last-child{
+        flex-grow: 0.5;
+      }
+
+      .heat{
+        display: flex;
+        flex-grow: 1;
+        flex-direction: column;
+
+        .placeholder-filler,
+        .filler{
+          flex-grow: 1;
+          min-height: 30px;
+        }
+        .filler{
+          border-right: 1px solid #aaa;
+        }
+
+        .participant-filler{
+          display: flex;
+          flex-grow: 1;
+        }
+        .participant-filler:first-child,
+        .participant-filler:last-child{
+          flex-grow: 0.5;
+        }
+
+        .participant-top,
+        .participant-bottom,
+        .placeholder-top,
+        .placeholder-bottom{
+          height: 30px;
+        }
+        .participant-top,
+        .participant-center{
+          border-bottom: 1px solid #aaa;
+        }
+        .participant-center{
+        }
+        .participant-bottom{
+          border-top: 1px solid #aaa;
+        }
+      }
+    }
+  }
+
+  .phase-time{
+    width: 3em;
+  }
+
+  .participant{
+    display: inline-block;
+    min-width: 300px;
+    padding-left: 10px;
+  }
+
+  .participant-top .empty-driver{
+    display: inline-block;
+    height: 30px;
+    padding-top: 7px;
+  }
+}

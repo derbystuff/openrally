@@ -1,16 +1,18 @@
 const Builder = require('../lib/dbroutebuilder').Builder;
 const Joi = require('joi');
+/*
+Bracket{
+  
+}
+*/
 const builder = new Builder({
-  collection: 'races',
-  route: 'races',
+  collection: 'brackets',
+  route: 'brackets',
   orm: {
-    date: Joi.date(),
     division: Joi.string().allow('ndr', 'aa'),
     type: Joi.string().allow('double', 'single'),
-    class: Joi.string().allow('st', 'ss', 'ma', 'ul', 'sk', 'ad'),
-    entrants: Joi.array().items(Joi.string()).optional(),
-    heats: Joi.array().optional(),
-    bracket: Joi.object().optional(),
+    version: Joi.string(),
+    bracket: Joi.object(),
   }
 });
 const routes = builder.routes();

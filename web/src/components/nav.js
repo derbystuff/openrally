@@ -38,6 +38,8 @@ module.exports = React.createClass({
         <Nav>
           <NavLink to="/racers">Racers</NavLink>
           <NavLink to="/races">Races</NavLink>
+          <NavLink to="/brackets">Brackets</NavLink>
+          <NavLink to="/timer">Timer</NavLink>
           <NavLink to="/about">About</NavLink>
           <NavLink to="/contact">Contact</NavLink>
         </Nav>
