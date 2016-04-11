@@ -5,82 +5,10 @@ const {
 const uuid = require('node-uuid').v4;
 const Chance = require('chance');
 const chance = new Chance();
-
-class Racer{
-  constructor(base, id){
-    Object.keys(base).forEach((key)=>{
-      if(key!=='type'){
-        this[key] = base[key];
-      }
-    });
-    if(id === void 0){
-      id = uuid();
-    }
-    this.id = id.toString();
-  }
-};
-
-class Race{
-  constructor(base, id){
-    Object.keys(base).forEach((key)=>{
-      if(key!=='type'){
-        this[key] = base[key];
-      }
-    });
-    if(id === void 0){
-      id = (new Date()).getTime();
-    }
-    this.id = id.toString();
-  }
-};
-
-const racer = (state, action) => {
-  switch(action.type){
-    case('INSERT_RACER'):
-      return new Racer(action.racer, action.racer.id);
-    case('UPDATE_RACER'):
-      return new Racer(action.racer, action.racer.id);
-    default:
-      return state;
-  }
-};
-
-const racers = (state = [], action) => {
-  switch(action.type){
-    case('INSERT_RACER'):
-      return [...state, racer(action.racer, action)];
-    case('DELETE_RACER'):
-      return state.filter((racer)=>racer.id!==action.racer.id);
-    case('UPDATE_RACER'):
-      return state.map((racerInfo)=>racerInfo.id===action.racer.id?racer(action.racer, action):racerInfo);
-    default:
-      return state;
-  }
-};
-
-const race = (state, action) => {
-  switch(action.type){
-    case('INSERT_RACE'):
-      return new Race(action.racer);
-    case('UPDATE_RACE'):
-      return new Race(action.racer, action.race.id);
-    default:
-      return state;
-  }
-};
-
-const races = (state = [], action) => {
-  switch(action.type){
-    case('INSERT_RACE'):
-      return [...state, race(action.race, action)];
-      case('DELETE_RACE'):
-        return state.filter((race)=>racer.id!==action.race.id);
-      case('UPDATE_RACE'):
-        return state.map((raceInfo)=>raceInfo.id===action.race.id?racer(action.race, action):raceInfo);
-      default:
-        return state;
-  }
-}
+const racers = require('./racers');
+const races = require('./races');
+const brackets = require('./brackets');
+const fetch = require('isomorphic-fetch');
 
 const location = (state = {hash: '', pathname: '/', query: {}, search: ''}, action) => {
   switch(action.type){
@@ -95,6 +23,7 @@ const appData = combineReducers({
   location,
   races,
   racers,
+  brackets,
 });
 
 let store = createStore(appData);
@@ -131,6 +60,23 @@ for(let i = 0; i<50; i++){
   }});
 }
 
-console.log(store.getState())
+console.log(store.getState());
+
+const getListing = (api, dispatchType)=>{
+  fetch(api)
+    .then((response)=>{
+      if(response.status >= 400){
+        throw new Error('Bad response from server');
+      }
+      return response.json();
+    })
+    .then((response)=>{
+      const records = response[response.root];
+      records.forEach((record)=>store.dispatch({type: dispatchType, record}));
+    });
+};
+getListing('/api/v1/brackets', 'INSERT_BRACKET');
+getListing('/api/v1/races', 'INSERT_RACE');
+getListing('/api/v1/racers', 'INSERT_RACER');
 
 module.exports = store;

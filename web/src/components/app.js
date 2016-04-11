@@ -25,6 +25,8 @@ const EditRace = require('../pages/races/edit');
 const ViewTimer = require('../pages/timer/view');
 
 const ViewBracket = require('../pages/brackets/view');
+const ListBrackets = require('../pages/brackets/list');
+const EditBracket = require('../pages/brackets/edit');
 
 const { Provider } = require('react-redux');
 const store = require('../reducers');
@@ -60,7 +62,11 @@ module.exports = React.createClass({
             <Route path="races" component={Races} />
             <Route path="races/:id" component={ViewRace} />
             <Route path="races/:id/edit" component={EditRace} />
-            <Route path="brackets" component={ViewBracket} />
+            <Route path="races/new" component={EditRace} />
+            <Route path="brackets" component={ListBrackets} />
+            <Route path="brackets/new" component={EditBracket} />
+            <Route path="brackets/:id/edit" component={EditBracket} />
+            <Route path="brackets/:id" component={ViewBracket} />
             <Route path="timer" component={ViewTimer} />
             <Route path="about" component={About} />
             <Route path="contact" component={Contact} />

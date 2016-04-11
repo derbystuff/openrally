@@ -207,15 +207,18 @@ class Bracket extends Component{
 
   render(){
     return (
-      <BracketChart
-        className="bigger"
-        layout={layout}
-        data={data}
-        participants={racers}
-        getParticipant={this.getRacerInfo}
-        getFiller={this.getFiller.bind(this)}
-        />
-    )
+      <div>
+        <h1>View Bracket {this.props.params.id}</h1>
+        <BracketChart
+          className="bigger"
+          layout={layout}
+          data={data}
+          participants={racers}
+          getParticipant={this.getRacerInfo}
+          getFiller={this.getFiller.bind(this)}
+          />
+      </div>
+    );
   }
 };
 
