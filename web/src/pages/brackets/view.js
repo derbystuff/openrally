@@ -188,11 +188,11 @@ class Bracket extends Component{
       return getWinnerText(getParticipant(bottom.car, participants), bottom.phase1+bottom.phase2);
     }
     const overall = (top.phase1||top.phase2)-(bottom.phase1||bottom.phase2);
-    if(overall>0){
-      return getWinnerText(getParticipant(top.car, participants), overall);
-    }
     if(overall<0){
-      return getWinnerText(getParticipant(bottom.car, participants), -overall);
+      return getWinnerText(getParticipant(top.car, participants), -overall);
+    }
+    if(overall>0){
+      return getWinnerText(getParticipant(bottom.car, participants), overall);
     }
     return 'TIE - Rerun it!';
   }
