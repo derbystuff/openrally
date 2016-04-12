@@ -44,7 +44,7 @@ class Bracket extends Component{
     if(isFinal){
       return (
         <div className="round" key={key}>
-          {this.getFinal({key, level, heat: startHeat, winner: heats[0]})}
+          {this.getFinal({key, level, heat: startHeat, winner: (heats||[])[0]})}
         </div>
       );
     }
@@ -121,6 +121,9 @@ class Bracket extends Component{
           key,
           heat
         } = options;
+    if(!heat){
+      return;
+    }
     return (
       <div className="heat">
         <div className="participant-filler"></div>
@@ -136,7 +139,7 @@ class Bracket extends Component{
     const lastHeat = layout.length-1;
     const rounds = layout.map((heats, key)=>{
       const round = this.getRound({heats, startHeat: heatNum, key, level: key, isFinal: key===lastHeat});
-      heatNum += heats.filter((heat)=>(heat !== null)&&(heat !== void 0)).length;
+      heatNum += (heats||[]).filter((heat)=>(heat !== null)&&(heat !== void 0)).length;
       return round;
     });
     const classNames = classList(this, {
