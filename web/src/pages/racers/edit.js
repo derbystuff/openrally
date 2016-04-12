@@ -15,10 +15,12 @@ const {
 const {
   connect,
 } = require('react-redux');
+const store = require('../../reducers');
 
 class EditRacer extends Component{
   getRacerInfo(){
     const id = this.props.id || false;
+    const interests = (this.refs.interests.getValue()||'').split(',').map(s=>s.trim()).filter(s=>!!s);
     return {
       id,
       givenName: this.refs.givenName.getValue(),
@@ -30,7 +32,7 @@ class EditRacer extends Component{
       region: this.refs.region.getValue(),
       favorite: this.refs.favorite.getValue(),
       car: {
-        design: this.refs.carDesign.getValue(),
+        decoration: this.refs.carDesign.getValue(),
       },
       sponsor: this.refs.sponsor.getValue(),
       ndr: {
@@ -39,7 +41,7 @@ class EditRacer extends Component{
       aa: {
         number: this.refs.aaNumber.getValue(),
       },
-      interests: (this.refs.interests.value||'').split(',').map(s=>s.trim()),
+      interests: interests,
     };
   }
 
@@ -50,12 +52,21 @@ class EditRacer extends Component{
     }
     const id = this.props.id || false;
     if(id && this.props.onSave){
-      this.props.onSave(this.getRacerInfo());
+      this.props.onSave(this.getRacerInfo(), (err, record)=>{
+        if(err){
+          return;
+        }
+        this.context.router.push('/racers');
+      });
     }
     if(!id && this.props.onRegister){
-      this.props.onRegister(this.getRacerInfo());
+      this.props.onRegister(this.getRacerInfo(), (err, record)=>{
+        if(err){
+          return;
+        }
+        this.context.router.push('/racers');
+      });
     }
-    this.context.router.push('/racers');
   }
 
   render(){
@@ -92,12 +103,12 @@ class EditRacer extends Component{
           <LabeledInput label="Date of Birth:" value={dobStr} ref="dob" />
           <LabeledInput label="Home Track:" value={homeTrack} ref="homeTrack" />
           <LabeledInput label="Region:" value={region} ref="region" />
-          <LabeledInput label="Car Design:" value={car.design} ref="carDesign" />
+          <LabeledInput label="Car Design:" value={car.decoration} ref="carDesign" />
           <LabeledTextarea label="Favorite thing about racing:" value={favorite} ref="favorite" />
           <LabeledInput label="Sponsor:" value={sponsor} ref="sponsor" />
           <LabeledInput label="NDR Number:" value={ndrNumber} ref="ndrNumber" />
           <LabeledInput label="AA Number:" value={aaNumber} ref="aaNumber" />
-          <LabeledTextarea label="Interests:" value={interests} ref="interests" />
+          <LabeledTextarea label="Interests:" value={interests.join(', ')} ref="interests" />
         </div>
         <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
       </form>
@@ -118,11 +129,19 @@ const mapStateToProps = (state, ownProps) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onSave: (racer)=>{
-      dispatch({ type:'UPDATE_RACER', racer });
+    onSave: (racer, callback)=>{
+      store.updateRecord({
+        type: 'RACER',
+        endpoint: 'racers',
+        data: racer
+      }, callback);
     },
-    onRegister: (racer)=>{
-      dispatch({ type:'INSERT_RACER', racer });
+    onRegister: (racer, callback)=>{
+      store.addRecord({
+        type: 'RACER',
+        endpoint: 'racers',
+        data: racer
+      }, callback);
     },
   };
 };

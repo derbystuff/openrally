@@ -9,6 +9,7 @@ const racers = require('./racers');
 const races = require('./races');
 const brackets = require('./brackets');
 const fetch = require('isomorphic-fetch');
+const noop = ()=>{};
 
 const location = (state = {hash: '', pathname: '/', query: {}, search: ''}, action) => {
   switch(action.type){
@@ -28,6 +29,7 @@ const appData = combineReducers({
 
 let store = createStore(appData);
 
+/*
 store.dispatch({type:'INSERT_RACER', racer: {
   id: 252,
   givenName: 'Julian',
@@ -39,7 +41,6 @@ store.dispatch({type:'INSERT_RACER', racer: {
     number: 252,
   }
 }});
-
 for(let i = 0; i<50; i++){
   const [
     givenName,
@@ -61,7 +62,7 @@ for(let i = 0; i<50; i++){
 }
 
 console.log(store.getState());
-
+*/
 const getListing = (api, dispatchType)=>{
   fetch(api)
     .then((response)=>{
@@ -78,5 +79,68 @@ const getListing = (api, dispatchType)=>{
 getListing('/api/v1/brackets', 'INSERT_BRACKET');
 getListing('/api/v1/races', 'INSERT_RACE');
 getListing('/api/v1/racers', 'INSERT_RACER');
+
+store.addRecord = (options, callback)=>{
+  const endpoint = options.endpoint;
+  const type = options.type.toUpperCase();
+  const raw = options.data;
+  const id = raw.id;
+  const record = Object.keys(raw).reduce((obj, key)=>{
+    if(key !== 'id'){
+      obj[key] = raw[key];
+    }
+    return obj;
+  }, {});
+  fetch(`/api/v1/${endpoint}`, {
+    method: 'POST',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(record)
+  })
+  .then((response)=>{
+    if(response.status >= 400){
+      return (callback||noop)(new Error('Bad response from server'));
+    }
+    return response.json();
+  })
+  .then((record)=>{
+    store.dispatch({type: `INSERT_${type}`, record});
+    setImmediate(()=>(callback||noop)(null, record));
+  });
+};
+
+store.updateRecord = (options, callback)=>{
+  const endpoint = options.endpoint;
+  const type = options.type.toUpperCase();
+  const raw = options.data;
+  const id = raw.id;
+  const record = Object.keys(raw).reduce((obj, key)=>{
+    if(key !== 'id'){
+      obj[key] = raw[key];
+    }
+    return obj;
+  }, {});
+  fetch(`/api/v1/${endpoint}/${id}`, {
+    method: 'PUT',
+    headers: {
+      'Accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(record)
+  })
+  .then((response)=>{
+    if(response.status >= 400){
+      return (callback||noop)(new Error('Bad response from server'));
+    }
+    return response.json();
+  })
+  .then((record)=>{
+    store.dispatch({type: `UPDATE_${type}`, record});
+    console.log(record);
+    setImmediate(()=>(callback||noop)(null, record));
+  });
+};
 
 module.exports = store;

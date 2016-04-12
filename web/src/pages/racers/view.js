@@ -56,7 +56,7 @@ class ViewRacer extends Component{
           <LabeledItem label="Sponsor:" value={sponsor} hideIfNone={true} />
           <LabeledItem label="NDR Number:" value={ndrNumber} hideIfNone={true} />
           <LabeledItem label="AA Number:" value={aaNumber} hideIfNone={true} />
-          <LabeledItem label="Interests:" value={interests} hideIfNone={true} />
+          <LabeledItem label="Interests:" value={interests.join(', ')} hideIfNone={true} />
         </LabeledList>
         <Link className="btn btn-warning" to={`/racers/${id}/edit`}>Edit</Link>
       </div>

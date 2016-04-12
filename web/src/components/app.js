@@ -28,6 +28,10 @@ const ViewBracket = require('../pages/brackets/view');
 const ListBrackets = require('../pages/brackets/list');
 const EditBracket = require('../pages/brackets/edit');
 
+const ViewHeat = require('../pages/heats/view');
+const ListHeats = require('../pages/heats/list');
+const EditHeat = require('../pages/heats/edit');
+
 const { Provider } = require('react-redux');
 const store = require('../reducers');
 
@@ -67,6 +71,10 @@ module.exports = React.createClass({
             <Route path="brackets/new" component={EditBracket} />
             <Route path="brackets/:id/edit" component={EditBracket} />
             <Route path="brackets/:id" component={ViewBracket} />
+            <Route path="heats" component={ListHeats} />
+            <Route path="heats/new" component={EditHeat} />
+            <Route path="heats/:id/edit" component={EditHeat} />
+            <Route path="heats/:id" component={ViewHeat} />
             <Route path="timer" component={ViewTimer} />
             <Route path="about" component={About} />
             <Route path="contact" component={Contact} />

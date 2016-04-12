@@ -21,23 +21,23 @@ const builder = new Builder({
   orm: {
     givenName: Joi.string(),
     familyName: Joi.string(),
-    nickName: Joi.string().optional(),
-    gender: Joi.string().optional(),
+    nickName: Joi.string().allow('').optional(),
+    gender: Joi.string().allow('').optional(),
     dob: Joi.date().optional(),
-    homeTrack: Joi.string().optional(),
+    homeTrack: Joi.string().allow('').optional(),
     region: Joi.number().optional(),
-    favorite: Joi.string().optional(),
-    sponsor: Joi.string().optional(),
+    favorite: Joi.string().allow('').optional(),
+    sponsor: Joi.string().allow('').optional(),
     car: Joi.object().keys({
-      decoration: Joi.string().optional(),
+      decoration: Joi.string().allow('').optional(),
     }).optional(),
     ndr: Joi.object().keys({
-      number: Joi.number(),
+      number: Joi.number().allow(''),
     }).optional(),
     aa:  Joi.object().keys({
-      number: Joi.number(),
+      number: Joi.number().allow(''),
     }).optional(),
-    interests: Joi.array().items(Joi.string()).optional(),
+    interests: Joi.array().items(Joi.string().allow('')).optional(),
   }
 });
 const routes = builder.routes();
