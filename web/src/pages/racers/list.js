@@ -62,6 +62,15 @@ const RacersList = React.createClass({
           <tbody>
             {racers}
           </tbody>
+          <tfoot>
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>NDR Number</th>
+              <th>AA Number</th>
+              <th>Actions</th>
+            </tr>
+          </tfoot>
         </table>
         <RacerListTools />
       </div>

@@ -6,6 +6,7 @@ const uuid = require('node-uuid').v4;
 const Chance = require('chance');
 const chance = new Chance();
 const racers = require('./racers');
+const events = require('./events');
 const races = require('./races');
 const brackets = require('./brackets');
 const fetch = require('isomorphic-fetch');
@@ -23,6 +24,7 @@ const location = (state = {hash: '', pathname: '/', query: {}, search: ''}, acti
 const appData = combineReducers({
   location,
   races,
+  events,
   racers,
   brackets,
 });
@@ -77,6 +79,7 @@ const getListing = (api, dispatchType)=>{
     });
 };
 getListing('/api/v1/brackets', 'INSERT_BRACKET');
+getListing('/api/v1/events', 'INSERT_EVENT');
 getListing('/api/v1/races', 'INSERT_RACE');
 getListing('/api/v1/racers', 'INSERT_RACER');
 

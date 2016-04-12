@@ -37,13 +37,13 @@ module.exports = React.createClass({
         </Navbar.Header>
         <Nav>
           <NavLink to="/racers">Racers</NavLink>
+          <NavLink to="/brackets">Brackets</NavLink>
           <NavLink to="/events">Events</NavLink>
           <NavLink to="/races">Races</NavLink>
-          <NavLink to="/brackets">Brackets</NavLink>
           <NavLink to="/heats">Heats</NavLink>
           <NavLink to="/timer">Timer</NavLink>
-          <NavLink to="/about">About</NavLink>
-          <NavLink to="/contact">Contact</NavLink>
+          {/*<NavLink to="/about">About</NavLink>*/}
+          {/*<NavLink to="/contact">Contact</NavLink>*/}
         </Nav>
       </Navbar>
     );

@@ -34,7 +34,7 @@ const races = (state = [], action) => {
       case('DELETE_RACE'):
         return state.filter((race)=>_race.id!==race.id);
       case('UPDATE_RACE'):
-        return state.map((raceInfo)=>raceInfo.id===_race.id?racer(_race, action):raceInfo);
+        return state.map((raceInfo)=>raceInfo.id===_race.id?race(_race, action):raceInfo);
       default:
         return state;
   }
