@@ -1,16 +1,28 @@
 const React = require('react');
-const {
-  Input,
-} = require('react-bootstrap');
-
-module.exports = React.createClass({
-  getValue: function() {
-      return this.refs.editor.getValue();
-  },
+class LabeledInput extends React.Component{
+  getValue(){
+    return this.refs.editor.value;
+  }
 
   render(){
+    const inputProps = Object.keys(this.props).reduce((obj, key)=>{
+      if(key === 'label'){
+        return obj;
+      }
+      if(key === 'value'){
+        obj.defaultValue = this.props.value;
+        return obj;
+      }
+      obj[key] = this.props[key];
+      return obj;
+    }, {});
     return (
-      <Input type="textarea" label={this.props.label} defaultValue={this.props.value} ref="editor" />
+      <div className="form-group">
+        <label className="control-label">{this.props.label}</label>
+        <textarea type="text" className="form-control" {...inputProps} ref="editor" />
+      </div>
     );
   }
-});
+};
+
+module.exports = LabeledInput;
