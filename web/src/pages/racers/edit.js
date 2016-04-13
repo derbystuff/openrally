@@ -69,10 +69,7 @@ class EditRacer extends Component{
     }
   }
 
-  render(){
-    const id = this.props.id || false;
-    const racers = this.props.racers.filter((racer)=>racer.id===id);
-    const racer = racers.shift()||{};
+  getEditForm(racer){
     const {
       givenName = '',
       familyName = '',
@@ -87,6 +84,7 @@ class EditRacer extends Component{
       ndr = {},
       aa = {},
       interests = [],
+      id = false,
     } = racer;
     const dobStr = dob.toLocaleString().split(',').shift();
     const ndrNumber = ndr.number;
@@ -96,7 +94,7 @@ class EditRacer extends Component{
       <form onSubmit={this.saveChanges}>
         <h1>{action} Racer</h1>
         <div className="form-group">
-          <LabeledInput label="Given Name:" value={givenName} ref="givenName" />
+          <LabeledInput label="Given Name:" value={givenName} ref="givenName" required={true} />
           <LabeledInput label="Family Name:" value={familyName} ref="familyName" />
           <LabeledInput label="Nick Name:" value={nickName} ref="nickName" />
           <LabeledInput label="Gender:" value={gender} ref="gender" />
@@ -113,6 +111,13 @@ class EditRacer extends Component{
         <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
       </form>
     );
+  }
+
+  render(){
+    const id = this.props.id || false;
+    const racers = this.props.racers.filter((racer)=>racer.id===id);
+    const racer = racers.shift();
+    return racer||(id===false)?this.getEditForm(racer||{}):<span>Loading...</span>;
   }
 }
 
