@@ -5,6 +5,12 @@ const {
 const {
   connect,
 } = require('react-redux');
+const fetch = require('isomorphic-fetch');
+const {
+  Button,
+  Modal,
+} = require('react-bootstrap');
+const store = require('../../reducers');
 
 const isEntryPoint = (options)=>{
   const {
@@ -56,10 +62,68 @@ const calcNumEntrantsForLevel = (options)=>{
   }, 0);
 };
 
+const calcNumEntrants = (bracket)=>{
+  const layout = bracket || [];
+  return layout.reduce((accum, level, index)=>accum+calcNumEntrantsForLevel({layout, level, index}), 0);
+};
+
+class ConfirmDelete extends React.Component{
+  cancel(e){
+    e&&e.preventDefault();
+    if(this.props.onCancel){
+      this.props.onCancel();
+    }
+  }
+  deleteBracket(e){
+    e&&e.preventDefault();
+    if(this.props.onDelete){
+      this.props.onDelete(this.props.id);
+    }
+  }
+  renderDialog(){
+    const {
+      id,
+      division,
+      version,
+      entrants,
+      bracket,
+    } = this.props;
+    const brackets = ((bracket||[])[0]||[]).filter((bracket)=>(bracket!==null));
+    const entrantCount = entrants?entrants:calcNumEntrants(bracket);
+    return (
+      <div className="static-modal">
+        <Modal.Dialog>
+          <Modal.Header>
+            <Modal.Title>Are you sure?</Modal.Title>
+          </Modal.Header>
+
+          <Modal.Body>
+            Are you sure you want to delete the Bracket "{division} {version}" with {entrantCount} participants?
+          </Modal.Body>
+
+          <Modal.Footer>
+            <Button onClick={this.cancel.bind(this)}>Cancel</Button>
+            <Button onClick={this.deleteBracket.bind(this)} bsStyle="danger">Delete</Button>
+          </Modal.Footer>
+
+        </Modal.Dialog>
+      </div>
+    );
+  }
+  render(){
+    if(this.props.id){
+      return this.renderDialog();
+    }
+    return <span />;
+  }
+};
+
 class BracketListItem extends React.Component{
-  calcNumEntrants(bracket){
-    const layout = bracket || [];
-    return layout.reduce((accum, level, index)=>accum+calcNumEntrantsForLevel({layout, level, index}), 0);
+  confirmDelete(e){
+    e&&e.preventDefault();
+    if(this.props.onConfirmDelete){
+      this.props.onConfirmDelete(this.props);
+    }
   }
 
   render(){
@@ -71,7 +135,7 @@ class BracketListItem extends React.Component{
       bracket,
     } = this.props;
     const brackets = ((bracket||[])[0]||[]).filter((bracket)=>(bracket!==null));
-    const entrantCount = entrants?entrants:this.calcNumEntrants(bracket);
+    const entrantCount = entrants?entrants:calcNumEntrants(bracket);
     return (
       <tr>
         <td>
@@ -89,7 +153,7 @@ class BracketListItem extends React.Component{
         <td>
           <Link className="btn" to={`/brackets/${id}`}>View</Link>
           <Link className="btn btn-warning" to={`/brackets/${id}/edit`}>Edit</Link>
-          <Link className="btn btn-danger" to={`/brackets/${id}/edit`}>Delete</Link>
+          <a href="#" className="btn btn-danger" onClick={this.confirmDelete.bind(this)}>Delete</a>
         </td>
       </tr>
     );
@@ -107,10 +171,34 @@ class BracketsListTools extends React.Component{
 };
 
 class BracketsList extends React.Component{
+  constructor(params){
+    super(params);
+    this.state = {bracket: {}};
+  }
+
+  cancelDelete(){
+    this.setState({bracket: {}});
+  }
+
+  deleteBracket(id){
+    fetch(`/api/v1/brackets/${id}`, {
+      method: 'DELETE'
+    })
+    .then((response)=>{
+      store.dispatch({type: 'DELETE_BRACKET', bracket: {id}});
+      this.setState({bracket: {}});
+    });
+  }
+
+  confirmDelete(bracket){
+    this.setState({bracket});
+  }
+
   render(){
-    const brackets = this.props.brackets.map((bracket)=><BracketListItem key={bracket.id} {...bracket} />);
+    const brackets = this.props.brackets.map((bracket)=><BracketListItem key={bracket.id} {...bracket} onConfirmDelete={this.confirmDelete.bind(this)} />);
     return (
       <div>
+        <ConfirmDelete {...this.state.bracket} onCancel={this.cancelDelete.bind(this)} onDelete={this.deleteBracket.bind(this)} />
         <h1>List Brackets</h1>
         <BracketsListTools />
         <table className="table">

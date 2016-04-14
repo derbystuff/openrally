@@ -9,6 +9,7 @@ const racers = require('./racers');
 const events = require('./events');
 const races = require('./races');
 const brackets = require('./brackets');
+const timer = require('./timer');
 const fetch = require('isomorphic-fetch');
 const noop = ()=>{};
 
@@ -27,44 +28,11 @@ const appData = combineReducers({
   events,
   racers,
   brackets,
+  timer,
 });
 
 let store = createStore(appData);
 
-/*
-store.dispatch({type:'INSERT_RACER', racer: {
-  id: 252,
-  givenName: 'Julian',
-  familyName: 'Darling',
-  gender: 'Male',
-  region: 4,
-  dob: new Date(Date.parse('09/19/2002')),
-  ndr: {
-    number: 252,
-  }
-}});
-for(let i = 0; i<50; i++){
-  const [
-    givenName,
-    familyName
-  ] = chance.name().split(' ');
-  store.dispatch({type:'INSERT_RACER', racer: {
-    givenName,
-    familyName,
-    region: 4,
-    dob: chance.birthday({type: 'child'}),
-    gender: chance.gender(),
-    ndr: {
-      number: 253+i,
-    },
-    aa: {
-      number: 1000+i,
-    }
-  }});
-}
-
-console.log(store.getState());
-*/
 const getListing = (api, dispatchType)=>{
   fetch(api)
     .then((response)=>{
@@ -78,10 +46,26 @@ const getListing = (api, dispatchType)=>{
       records.forEach((record)=>store.dispatch({type: dispatchType, record}));
     });
 };
+const get = (api, dispatchType)=>{
+  fetch(api)
+    .then((response)=>{
+      if(response.status >= 400){
+        throw new Error('Bad response from server');
+      }
+      return response.json();
+    })
+    .then((record)=>{
+      store.dispatch({type: dispatchType, record});
+    })
+    .catch(()=>{
+      store.dispatch({type: 'TIMER_ERROR'});
+    });
+};
 getListing('/api/v1/brackets', 'INSERT_BRACKET');
 getListing('/api/v1/events', 'INSERT_EVENT');
 getListing('/api/v1/races', 'INSERT_RACE');
 getListing('/api/v1/racers', 'INSERT_RACER');
+get('/api/v1/timer', 'UPDATE_TIMER');
 
 store.addRecord = (options, callback)=>{
   const endpoint = options.endpoint;

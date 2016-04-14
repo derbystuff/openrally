@@ -2,74 +2,62 @@ const React = require('react');
 const {
   Component
 } = React;
+
+const fetch = require('isomorphic-fetch');
 const {
-  Button,
-} = require('react-bootstrap');
+  connect,
+} = require('react-redux');
+const {
+  TimerOptions,
+  Display,
+} = require('../../components/timer');
 
-class TimerReset extends Component{
-  reset(e){
-    e.preventDefault();
+class Page extends Component{
+  constructor(props){
+    super(props);
+    this.state = {};
   }
+  
+  reset(){
+    fetch('/api/v1/timer/reset', {
+      method: 'POST',
+      headers: {
+        'Accept': 'application/json',
+        'Content-Type': 'application/json'
+      },
+    });
+  }
+
+  getDisplay(status){
+    if(status === 'offline'){
+      return (
+        <div className="timer-wrapper">
+          <span className="offline">OFFLINE</span>
+        </div>
+      );
+    }
+    const timer = this.props.timer || {};
+    return <Display {...timer} />
+  }
+
   render(){
-    return (
-      <Button onClick={this.reset}>Reset</Button>
-    );
-  }
-};
-
-class Timer extends Component{
-  render(){
-    const timerValue = 0.000;
-    return (
-      <div className="timer">
-        {timerValue.toFixed(3)}
-      </div>
-    );
-  }
-};
-
-class Winner extends Component{
-  getDisplayText(){
-    const lane = 1;
-    const winner = {
-      givenName: 'Julian',
-      familyName: 'Darling',
-      carNumber: 101
-    };
-    return lane?<span>Lane {lane} - {winner.givenName} {winner.familyName} ({winner.carNumber})</span>:'';
-  }
-
-  render(){
-    return (
-      <div className="winner">
-        {this.getDisplayText()}
-      </div>
-    );
-  }
-};
-
-class Display extends Component{
-  render(){
-    const timerValue = 0.000;
-    return (
-      <div className="timer-wrapper">
-        <Timer />
-        <Winner />
-      </div>
-    );
-  }
-};
-
-module.exports = class extends Component{
-  render(){
+    const timer = this.props.timer || {};
+    const status = (timer.status || 'Offline').toLowerCase();
     return (
       <div>
         <h1>Timer</h1>
-        <div>
-          <Display />
-        </div>
-        <TimerReset />
+        <TimerOptions {...timer} onReset={this.reset.bind(this)}/>
+        {this.getDisplay(status)}
+        <TimerOptions {...timer} onReset={this.reset.bind(this)}/>
       </div>
     );
   }
 };
+
+const mapStateToProps = (state, ownProps) => {
+  return {
+    timer: state.timer,
+  };
+};
+
+module.exports = connect(mapStateToProps)(Page);

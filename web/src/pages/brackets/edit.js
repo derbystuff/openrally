@@ -205,22 +205,41 @@ class Bracket extends Component{
     return '';
   }
 
+  getEditView(options){
+    const {
+      id,
+      layout,
+      bracket,
+      racers,
+    } = options;
+    if((id!==void 0)&&(!bracket)){
+      return <span>Loading ...</span>;
+    }
+    return (
+      <div>
+        <h2>Preview</h2>
+        <BracketChart
+          className="bigger"
+          layout={layout}
+          bracket={bracket}
+          participants={racers}
+          data={[]}
+          getParticipant={this.getRacerInfo}
+          getFiller={this.getFiller.bind(this)}
+          />
+      </div>
+    );
+  }
+
   render(){
     const id = this.props.params.id;
     const bracket = this.props.brackets.filter((bracket)=>bracket.id === id).shift();
     const layout = bracket?bracket.bracket||[]:[];
-    const chart = bracket?<BracketChart
-              className="bigger"
-              layout={layout}
-              data={data}
-              bracket={bracket}
-              participants={racers}
-              getParticipant={this.getRacerInfo}
-              getFiller={this.getFiller.bind(this)}
-              />:<span>Loading ...</span>;
+    const chart = this.getEditView({id, layout, bracket, racers});
+    const action = id?'Edit':'New';
     return (
       <div>
-        <h1>Edit Bracket {this.props.params.id}</h1>
+        <h1>{action} Bracket</h1>
         {chart}
       </div>
     );
