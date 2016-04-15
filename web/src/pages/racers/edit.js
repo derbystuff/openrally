@@ -21,6 +21,7 @@ class EditRacer extends Component{
   getRacerInfo(){
     const id = this.props.id || false;
     const interests = (this.refs.interests.getValue()||'').split(',').map(s=>s.trim()).filter(s=>!!s);
+    const classes = (this.refs.classes.getValue()||'').split(',').map(s=>s.trim()).filter(s=>!!s);
     return {
       id,
       givenName: this.refs.givenName.getValue(),
@@ -41,7 +42,8 @@ class EditRacer extends Component{
       aa: {
         number: this.refs.aaNumber.getValue(),
       },
-      interests: interests,
+      classes,
+      interests,
     };
   }
 
@@ -84,6 +86,7 @@ class EditRacer extends Component{
       ndr = {},
       aa = {},
       interests = [],
+      classes = [],
       id = false,
     } = racer;
     const dobStr = dob.toLocaleString().split(',').shift();
@@ -107,6 +110,7 @@ class EditRacer extends Component{
           <LabeledInput label="NDR Number:" value={ndrNumber} ref="ndrNumber" />
           <LabeledInput label="AA Number:" value={aaNumber} ref="aaNumber" />
           <LabeledTextarea label="Interests:" value={interests.join(', ')} ref="interests" />
+          <LabeledInput label="Race Classes:" value={classes.join(', ')} ref="classes" />
         </div>
         <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
       </form>

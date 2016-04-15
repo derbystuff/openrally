@@ -28,6 +28,7 @@ const builder = new Builder({
     region: Joi.number().optional(),
     favorite: Joi.string().allow('').optional(),
     sponsor: Joi.string().allow('').optional(),
+    classes: Joi.array().items(Joi.string().allow('st', 'ss', 'ma', 'ul', 'sk', 'ad', 'test')).optional(),
     car: Joi.object().keys({
       decoration: Joi.string().allow('').optional(),
     }).optional(),

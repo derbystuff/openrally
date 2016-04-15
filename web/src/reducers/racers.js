@@ -1,5 +1,4 @@
 const uuid = require('node-uuid').v4;
-const fetch = require('isomorphic-fetch');
 
 class Racer{
   constructor(base, id){

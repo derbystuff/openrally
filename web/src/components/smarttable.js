@@ -8,12 +8,9 @@ const {
 const {
   connect,
 } = require('react-redux');
-const {
-  SmartTable,
-} = require('./smarttable');
 const reToken = /\$\{([^}]+)\}/gi;
-/*
-class Item extends React.Component{
+
+class Row extends React.Component{
   getActionHandler(options){
     const {
       caption,
@@ -39,45 +36,47 @@ class Item extends React.Component{
     const data = this.props.data;
     const id = data.id;
     const cells = this.props.map.map((f, index)=><td key={index}>{f(data)}</td>);
-    const actions = Object.keys(this.props.actions||{}).map((caption)=>this.getActionHandler({caption, settings: this.props.actions[caption], data}));
+    const actions = this.props.actions?(
+        <td>
+          {Object.keys(this.props.actions||{}).map((caption)=>this.getActionHandler({caption, settings: this.props.actions[caption], data}))}
+        </td>
+      ):null;
     return (
       <tr>
         {cells}
-        <td>
           {actions}
-        </td>
       </tr>
     );
   }
 };
-//*/
-class Tools extends React.Component{
-  getNewButton(){
-    if(!this.props.newLink){
-      return;
+
+class SmartTable extends React.Component{
+  constructor(props){
+    super(props);
+    this.state = {
+      data: props.data || props.rows || props.items || [],
+    };
+  }
+
+  componentWillReceiveProps(newProps){
+    if(newProps.data){
+      return this.setState({data: newProps.data});
     }
-    return <Link className="btn" to={this.props.newLink}>{this.props.newButtonCaption||'New'}</Link>;
+    if(newProps.rows){
+      return this.setState({data: newProps.rows});
+    }
+    if(newProps.items){
+      return this.setState({data: newProps.items});
+    }
   }
 
   render(){
-    return (
-      <div>
-        {this.getNewButton()}
-      </div>
-    );
-  }
-};
-/*
-class Table extends React.Component{
-  render(){
     const {
-      items,
       actions,
     } = this.props;
-    const headings = (this.props.headers||[]).map((caption, index)=><th key={caption}>{caption}</th>).concat([
-      <th key="actions">Actions</th>
-    ]);
-    const rows = (this.props.data||[]).map((row, index)=><Item key={row.id||index} map={this.props.rowmap||[]} data={row} actions={actions} />);
+    const actionsCol = actions?<th key="actions">Actions</th>:null;
+    const headings = (this.props.headers||[]).map((caption, index)=><th key={caption}>{caption}</th>).concat([actionsCol]);
+    const rows = (this.state.data||[]).map((row, index)=><Row key={row.id||index} map={this.props.rowmap||[]} data={row} actions={actions} />);
     return (
         <table className="table">
           <thead>
@@ -94,37 +93,11 @@ class Table extends React.Component{
             </tr>
           </tfoot>
         </table>
-    );
-  }
-};
-//*/
-
-class Page extends React.Component{
-  render(){
-    const {
-      title,
-    } = this.props;
-    return (
-      <div>
-        <h1>{title}</h1>
-        <Tools {...this.props} />
-        <SmartTable {...this.props} />
-        <Tools {...this.props} />
-      </div>
-    );
+      );
   }
 };
 
 module.exports = {
-  Page,
-  Table: SmartTable,
-  Tools
+  SmartTable,
+  SmartRow: Row,
 };
-
-/*
-const mapStateToProps = (state) => {
-  return state;
-};
-
-module.exports = connect(mapStateToProps)(Page);
-*/

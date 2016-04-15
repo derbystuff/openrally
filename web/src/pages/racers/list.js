@@ -3,80 +3,41 @@ const {
   Link,
 } = require('react-router');
 const {
+  Page,
+} = require('../../components/listtable');
+const {
   connect,
 } = require('react-redux');
+const {
+  calcNumEntrants,
+} = require('../../lib/utils');
 
-const RacerListItem = React.createClass({
+class Listing extends React.Component{
   render(){
-    const {
-      id,
-      givenName,
-      familyName,
-      ndr = {},
-      aa = {},
-    } = this.props.racer;
-    const ndrNumber = ndr.number || '';
-    const aaNumber = aa.number || '';
-    const name = `${familyName}, ${givenName}`;
+    const headers = [
+      'ID',
+      'Name',
+      'NDR Number',
+      'AA Number',
+    ];
+    const rowmap = [
+      (row)=>row.id,
+      (row)=>row.nickName?`${row.familyName}, ${row.givenName} (${row.nickName})`:`${row.familyName}, ${row.givenName}`,
+      (row)=>(row.ndr||{}).number || '',
+      (row)=>(row.aa||{}).number || '',
+    ];
+    const actions = {
+      View: '/racers/${id}',
+      Edit:{
+        href: '/racers/${id}/edit',
+        className: 'warning'
+      },
+    };
     return (
-      <tr>
-        <th>{id}</th>
-        <td>{name}</td>
-        <td>{ndrNumber}</td>
-        <td>{aaNumber}</td>
-        <td>
-          <Link className="btn" to={`/racers/${id}`}>View</Link>
-          <Link className="btn btn-warning" to={`/racers/${id}/edit`}>Edit</Link>
-        </td>
-      </tr>
+      <Page newLink="/racers/register" newButtonCaption="Register" title="Racers Listing" headers={headers} rowmap={rowmap} data={this.props.racers} actions={actions}/>
     );
   }
-});
-
-const RacerListTools = React.createClass({
-  render(){
-    return (
-      <div>
-        <Link className="btn" to="/racers/register">Register Racer</Link>
-      </div>
-    );
-  }
-});
-
-const RacersList = React.createClass({
-  render(){
-    const racers = this.props.racers.map((racer)=><RacerListItem key={racer.id} racer={racer} />);
-    return (
-      <div>
-        <RacerListTools />
-        <table className="table">
-          <thead>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>NDR Number</th>
-              <th>AA Number</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {racers}
-          </tbody>
-          <tfoot>
-            <tr>
-              <th>ID</th>
-              <th>Name</th>
-              <th>NDR Number</th>
-              <th>AA Number</th>
-              <th>Actions</th>
-            </tr>
-          </tfoot>
-        </table>
-        <RacerListTools />
-      </div>
-    );
-  }
-});
+};
 
 const mapStateToProps = (state) => {
   return {
@@ -84,16 +45,4 @@ const mapStateToProps = (state) => {
   };
 };
 
-const RacersListBound = connect(mapStateToProps)(RacersList);
-
-module.exports = React.createClass({
-  render(){
-    return (
-      <div>
-        <h1>Racers Listing</h1>
-        <p>Not done yet.</p>
-        <RacersListBound />
-      </div>
-    );
-  }
-});
+module.exports = connect(mapStateToProps)(Listing);

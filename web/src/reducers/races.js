@@ -3,9 +3,7 @@ const uuid = require('node-uuid').v4;
 class Race{
   constructor(base, id){
     Object.keys(base).forEach((key) => {
-      if(key!=='type'){
-        this[key] = base[key];
-      }
+      this[key] = base[key];
     });
     if(id === void 0){
       id = (new Date()).getTime();
@@ -18,7 +16,7 @@ const race = (state, action) => {
   const race = action.race||action.record;
   switch(action.type){
     case('INSERT_RACE'):
-      return new Race(race);
+      return new Race(race, race.id);
     case('UPDATE_RACE'):
       return new Race(race, race.id);
     default:

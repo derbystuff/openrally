@@ -125,7 +125,6 @@ store.updateRecord = (options, callback)=>{
   })
   .then((record)=>{
     store.dispatch({type: `UPDATE_${type}`, record});
-    console.log(record);
     setImmediate(()=>(callback||noop)(null, record));
   });
 };

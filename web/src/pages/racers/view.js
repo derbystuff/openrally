@@ -15,6 +15,16 @@ const {
   LabeledItem,
 } = require('../../components/labeledlist');
 
+const CLASS_LOOKUP = {
+  st: 'Stock',
+  ss: 'Super Stock',
+  ma: 'Masters',
+  ul: 'Ultimate Speed',
+  sk: 'Super Kids',
+  ad: 'Adult',
+  test: 'Test',
+};
+
 class ViewRacer extends Component{
   render(){
     const id = this.props.id || false;
@@ -34,6 +44,7 @@ class ViewRacer extends Component{
       ndr = {},
       aa = {},
       interests = [],
+      classes = [],
     } = racer;
     const dobStr = dob.toLocaleString().split(',').shift();
     const ndrNumber = ndr.number || 'Unknown';
@@ -57,6 +68,7 @@ class ViewRacer extends Component{
           <LabeledItem label="NDR Number:" value={ndrNumber} hideIfNone={true} />
           <LabeledItem label="AA Number:" value={aaNumber} hideIfNone={true} />
           <LabeledItem label="Interests:" value={interests.join(', ')} hideIfNone={true} />
+          <LabeledItem label="Classes:" value={classes.map((classShort)=>CLASS_LOOKUP[classShort]).join(', ')} hideIfNone={true} />
         </LabeledList>
         <Link className="btn btn-warning" to={`/racers/${id}/edit`}>Edit</Link>
       </div>

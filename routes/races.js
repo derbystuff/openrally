@@ -4,22 +4,26 @@ const builder = new Builder({
   collection: 'races',
   route: 'races',
   orm: {
+    eventId: Joi.string(),
     date: Joi.date(),
-    division: Joi.string().allow('ndr', 'aa', 'sk', 'test'),
-    concelation: Joi.boolean().default(false),
+    title: Joi.string().optional().allow(''),
+    consolation: Joi.boolean().default(false),
     type: Joi.string().allow('double', 'single'),
-    classes: Joi.array().items(Joi.object().keys({
-      class: Joi.string().allow('st', 'ss', 'ma', 'ul', 'sk', 'ad'),
-      entrants: Joi.array().items(Joi.string()).optional(),
-    })),
-    heats: Joi.array().optional(),
-    bracket: Joi.object().keys({
+    class: Joi.string().allow('st', 'ss', 'ma', 'ul', 'sk', 'ad', 'test'),
+    entrants: Joi.array().items(Joi.object().keys({
       id: Joi.string(),
-      division: Joi.string().allow('ndr', 'aa', 'sk', 'test'),
-      type: Joi.string().allow('double', 'single'),
-      version: Joi.string(),
-      bracket: Joi.array(),
-    }).optional(),
+      givenName: Joi.string(),
+      familyName: Joi.string(),
+      nickName: Joi.string().optional().allow(''),
+      divisionNumber: Joi.number().optional().allow(null),
+      carNumber: Joi.number().optional().allow(null),
+    })).optional().allow(null),
+    bracket: Joi.object().keys({
+      id: Joi.string().allow(''),
+      version: Joi.string().optional().allow(''),
+      heats: Joi.array().optional().allow(null),
+      layout: Joi.array().optional().allow(null),
+    }).optional().allow(null)
   }
 });
 const routes = builder.routes();

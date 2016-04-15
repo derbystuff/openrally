@@ -8,8 +8,8 @@ const {
 
 const BracketChart = require('../../components/bracket');
 
-const layout = [ //layout
-  [ //level
+const layout = [  //layout
+  [               //level
     [null, null], //heat
     null,
     [null, null],
@@ -63,7 +63,7 @@ const racers = (()=>{
     let i;
     for(i = 0; i<10; i++){
       participants.push({
-          driver: 'Participant '+i,
+          driver: `Participant ${i}`,
           number: 101+i
         });
     }
@@ -164,7 +164,7 @@ class Bracket extends Component{
     }
     if(options.isFinal){
       return {
-        display: car.driver+' ('+car.number+')'
+        display: `${car.driver} (${car.number})`
       };
     }
     const details = defaults(car, {

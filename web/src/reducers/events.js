@@ -8,7 +8,7 @@ class Event{
       }
     });
     if(id === void 0){
-      id = (new Date()).getTime();
+      id = uuid();
     }
     this.id = id.toString();
   }
@@ -18,7 +18,7 @@ const event = (state, action) => {
   const event = action.event||action.record;
   switch(action.type){
     case('INSERT_EVENT'):
-      return new Event(event);
+      return new Event(event, event.id);
     case('UPDATE_EVENT'):
       return new Event(event, event.id);
     default:

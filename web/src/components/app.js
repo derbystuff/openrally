@@ -16,12 +16,15 @@ const history = browserHistory;
 const Home = require('../pages/home');
 const About = require('../pages/about');
 const Contact = require('../pages/contact');
+
 const Racers = require('../pages/racers/list');
 const ViewRacer = require('../pages/racers/view');
 const EditRacer = require('../pages/racers/edit');
+
 const Races = require('../pages/races/list');
 const ViewRace = require('../pages/races/view');
 const EditRace = require('../pages/races/edit');
+
 const ViewTimer = require('../pages/timer/view');
 
 const ViewBracket = require('../pages/brackets/view');
@@ -68,9 +71,9 @@ module.exports = React.createClass({
             <Route path="racers/:id" component={ViewRacer} />
             <Route path="racers/:id/edit" component={EditRacer} />
             <Route path="races" component={Races} />
+            <Route path="races/new" component={EditRace} />
             <Route path="races/:id" component={ViewRace} />
             <Route path="races/:id/edit" component={EditRace} />
-            <Route path="races/new" component={EditRace} />
             <Route path="brackets" component={ListBrackets} />
             <Route path="brackets/new" component={EditBracket} />
             <Route path="brackets/:id/edit" component={EditBracket} />

@@ -6,7 +6,8 @@ const builder = new Builder({
   orm: {
     startDate: Joi.date(),
     endDate: Joi.date(),
-    divisions: Joi.array().items(Joi.string().allow('ndr', 'aa', 'sk', 'test')),
+    divisions: Joi.array().items(Joi.string().allow('ndr', 'aa', 'sk', 'adult', 'test')),
+    title: Joi.string().optional().allow(''),
     description: Joi.string().optional().allow(''),
     location: Joi.string().optional().allow(''),
   }
