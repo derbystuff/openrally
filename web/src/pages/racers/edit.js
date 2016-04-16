@@ -16,104 +16,106 @@ const {
   connect,
 } = require('react-redux');
 const store = require('../../reducers');
+const {
+  SmartForm
+} = require('../../components/smartform');
 
 class EditRacer extends Component{
-  getRacerInfo(){
-    const id = this.props.id || false;
-    const interests = (this.refs.interests.getValue()||'').split(',').map(s=>s.trim()).filter(s=>!!s);
-    const classes = (this.refs.classes.getValue()||'').split(',').map(s=>s.trim()).filter(s=>!!s);
-    return {
-      id,
-      givenName: this.refs.givenName.getValue(),
-      familyName: this.refs.familyName.getValue(),
-      nickName: this.refs.nickName.getValue(),
-      gender: this.refs.gender.getValue(),
-      dob: this.refs.dob.getValue(),
-      homeTrack: this.refs.homeTrack.getValue(),
-      region: this.refs.region.getValue(),
-      favorite: this.refs.favorite.getValue(),
-      car: {
-        decoration: this.refs.carDesign.getValue(),
-      },
-      sponsor: this.refs.sponsor.getValue(),
-      ndr: {
-        number: this.refs.ndrNumber.getValue(),
-      },
-      aa: {
-        number: this.refs.aaNumber.getValue(),
-      },
-      classes,
-      interests,
-    };
-  }
-
-  saveChanges(e){
-    if(e){
-      e.preventDefault();
-      e.stopPropagation();
-    }
-    const id = this.props.id || false;
-    if(id && this.props.onSave){
-      this.props.onSave(this.getRacerInfo(), (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/racers');
-      });
-    }
-    if(!id && this.props.onRegister){
-      this.props.onRegister(this.getRacerInfo(), (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/racers');
-      });
-    }
-  }
-
   getEditForm(racer){
     const {
-      givenName = '',
-      familyName = '',
-      nickName = '',
-      homeTrack = '',
-      region = '',
-      favorite = '',
-      gender = '',
-      dob = '',
-      car = {},
-      sponsor = '',
-      ndr = {},
-      aa = {},
-      interests = [],
-      classes = [],
       id = false,
     } = racer;
-    const dobStr = dob.toLocaleString().split(',').shift();
-    const ndrNumber = ndr.number;
-    const aaNumber = aa.number;
     const action = id&&racer?'Edit':'Register';
+    const fields = [
+      {
+        caption: 'Given Name:',
+        field: 'givenName',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Family Name:',
+        field: 'familyName',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Nick Name:',
+        field: 'nickName',
+        type: 'text',
+      },
+      {
+        caption: 'Gender:',
+        field: 'gender',
+        type: 'text'
+      },
+      {
+        caption: 'Date of Birth:',
+        type: 'date',
+        field: 'dob'
+      },
+      {
+        caption: 'Home Track:',
+        type: 'text',
+        field: 'homeTrack'
+      },
+      {
+        caption: 'Region:',
+        type: 'number',
+        field: 'region'
+      },
+      {
+        caption: 'Car Design:',
+        type: 'text',
+        field: 'car.decoration'
+      },
+      {
+        caption: 'Favorite thing about racing:',
+        type: 'text',
+        field: 'favorite'
+      },
+      {
+        caption: 'Sponsor:',
+        type: 'text',
+        field: 'sponsor'
+      },
+      {
+        caption: 'AA Number:',
+        type: 'number',
+        field: 'aa.number'
+      },
+      {
+        caption: 'NDR Number:',
+        type: 'number',
+        field: 'ndr.number'
+      },
+      {
+        caption: 'Interests:',
+        type: 'text',
+        field: 'interests',
+        default: [],
+        display: (value)=>value.join(', '),
+        store: (value)=>value.split(',').map(s=>s.trim()).filter(s=>!!s),
+      },
+      {
+        caption: 'Race Classes:',
+        type: 'text',
+        field: 'classes',
+        default: [],
+        display: (value)=>value.join(', '),
+        store: (value)=>value.split(',').map(s=>s.trim()).filter(s=>!!s),
+      },
+    ];
     return (
-      <form onSubmit={this.saveChanges}>
-        <h1>{action} Racer</h1>
-        <div className="form-group">
-          <LabeledInput label="Given Name:" value={givenName} ref="givenName" required={true} />
-          <LabeledInput label="Family Name:" value={familyName} ref="familyName" />
-          <LabeledInput label="Nick Name:" value={nickName} ref="nickName" />
-          <LabeledInput label="Gender:" value={gender} ref="gender" />
-          <LabeledInput label="Date of Birth:" value={dobStr} ref="dob" />
-          <LabeledInput label="Home Track:" value={homeTrack} ref="homeTrack" />
-          <LabeledInput label="Region:" value={region} ref="region" />
-          <LabeledInput label="Car Design:" value={car.decoration} ref="carDesign" />
-          <LabeledTextarea label="Favorite thing about racing:" value={favorite} ref="favorite" />
-          <LabeledInput label="Sponsor:" value={sponsor} ref="sponsor" />
-          <LabeledInput label="NDR Number:" value={ndrNumber} ref="ndrNumber" />
-          <LabeledInput label="AA Number:" value={aaNumber} ref="aaNumber" />
-          <LabeledTextarea label="Interests:" value={interests.join(', ')} ref="interests" />
-          <LabeledInput label="Race Classes:" value={classes.join(', ')} ref="classes" />
-        </div>
-        <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
-      </form>
+      <SmartForm
+        fields={fields}
+        data={racer}
+        title={`${action} Racer`}
+        ref="form"
+        onUpdate={(data, callback)=>this.props.onSave(data, callback)}
+        onInsert={(data, callback)=>this.props.onSave(data, callback)}
+        onSuccess={()=>this.context.router.push('/racers')}
+        />
     );
   }
 

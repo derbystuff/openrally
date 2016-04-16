@@ -12,17 +12,29 @@ const {
   calcNumEntrants,
 } = require('../../lib/utils');
 
+const CLASS_LOOKUP = {
+  st: 'Stock',
+  ss: 'Super Stock',
+  ma: 'Masters',
+  ul: 'Ultimate Speed',
+  sk: 'Super Kids',
+  ad: 'Adult',
+  test: 'Test',
+};
+
 class Listing extends React.Component{
   render(){
     const headers = [
       'ID',
       'Name',
+      'Classes',
       'NDR Number',
       'AA Number',
     ];
     const rowmap = [
       (row)=>row.id,
       (row)=>row.nickName?`${row.familyName}, ${row.givenName} (${row.nickName})`:`${row.familyName}, ${row.givenName}`,
+      (row)=>row.classes.map((classShort)=>CLASS_LOOKUP[classShort]).join(', '),
       (row)=>(row.ndr||{}).number || '',
       (row)=>(row.aa||{}).number || '',
     ];

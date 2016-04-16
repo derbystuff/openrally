@@ -16,10 +16,11 @@ class LabeledInput extends React.Component{
       obj[key] = this.props[key];
       return obj;
     }, {});
+    const type = inputProps.type || "text";
     return (
       <div className="form-group">
         <label className="control-label">{this.props.label}</label>
-        <input type="text" className="form-control" {...inputProps} ref="editor" />
+        <input type={type} className="form-control" {...inputProps} ref="editor" />
       </div>
     );
   }

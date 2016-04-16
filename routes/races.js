@@ -15,8 +15,8 @@ const builder = new Builder({
       givenName: Joi.string(),
       familyName: Joi.string(),
       nickName: Joi.string().optional().allow(''),
-      divisionNumber: Joi.number().optional().allow(null),
-      carNumber: Joi.number().optional().allow(null),
+      divisionNumber: Joi.number().optional().allow(''),
+      carNumber: Joi.number().optional().allow(''),
     })).optional().allow(null),
     bracket: Joi.object().keys({
       id: Joi.string().allow(''),
