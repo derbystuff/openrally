@@ -9,8 +9,9 @@ const builder = new Builder({
   collection: 'brackets',
   route: 'brackets',
   orm: {
+    name: Joi.string().allow('', null).optional(),
     division: Joi.string().allow('ndr', 'aa', 'sk', 'test'),
-    type: Joi.string().allow('double', 'single'),
+    type: Joi.string().allow('double', 'single', '', null).optional(),
     count: Joi.number().optional(),
     version: Joi.string(),
     bracket: Joi.array().items(

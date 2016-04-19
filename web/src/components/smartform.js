@@ -3,6 +3,8 @@ const {
   LabeledInput,
   LabeledTextarea,
   LabeledDatePicker,
+  LabeledSelect,
+  LabeledCheckbox,
 } = require('./editors');
 const {
   LabeledItem,
@@ -53,9 +55,10 @@ class SmartForm extends React.Component{
         type,
         caption,
         display,
+        render,
         store,
         default: defaultValue,
-        ...other
+        ...otherFields,
       } = info;
       const required = !!info.required;
       const value = (()=>{
@@ -68,7 +71,25 @@ class SmartForm extends React.Component{
         }
       })();
       const ref = this.getFieldReference(field);
+      const other = Object.keys(otherFields).reduce((other, key)=>{
+        if(key === 'onChange'){
+          const handler = otherFields[key];
+          other[key] = (e)=>{
+            const fieldRef = this.refs[ref];
+            return handler(e, fieldRef);
+          };
+          return other;
+        }
+        other[key] = otherFields[key];
+        return other;
+      }, {});
       switch(type.toLowerCase()){
+        case('custom'):
+          return render(ref, ref, value);
+        case('checkbox'):
+          return <LabeledCheckbox key={ref} label={caption || `${field}:`} value={value} ref={ref} required={required} {...other} />
+        case('select'):
+          return <LabeledSelect key={ref} label={caption || `${field}:`} value={value} ref={ref} required={required} {...other} />
         case('textarea'):
           return <LabeledTextarea key={ref} label={caption || `${field}:`} value={value} ref={ref} required={required} {...other} />
         case('date'):
@@ -93,12 +114,13 @@ class SmartForm extends React.Component{
         caption,
         display,
         store,
+        getValue=false,
         default: defaultValue,
         ...other
       } = info;
       const required = !!info.required;
       const ref = this.refs[this.getFieldReference(field)];
-      const rawValue = ref.getValue();
+      const rawValue = getValue?getValue(ref):ref.getValue();
       if(((rawValue==='')||
           (rawValue===null)||
           (rawValue===NaN)||

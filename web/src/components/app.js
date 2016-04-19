@@ -38,6 +38,7 @@ const EditHeat = require('../pages/heats/edit');
 const ViewEvent = require('../pages/events/view');
 const ListEvents = require('../pages/events/list');
 const EditEvent = require('../pages/events/edit');
+const EventParticipants = require('../pages/events/participants');
 
 const { Provider } = require('react-redux');
 const store = require('../reducers');
@@ -85,6 +86,7 @@ module.exports = React.createClass({
             <Route path="events" component={ListEvents} />
             <Route path="events/new" component={EditEvent} />
             <Route path="events/:id/edit" component={EditEvent} />
+            <Route path="events/:id/participants" component={EventParticipants} />
             <Route path="events/:id" component={ViewEvent} />
             <Route path="timer" component={ViewTimer} />
             <Route path="about" component={About} />

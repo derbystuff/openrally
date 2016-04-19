@@ -5,118 +5,41 @@ const {
 const {
   connect,
 } = require('react-redux');
+const store = require('../../reducers');
+const {
+  SmartForm,
+} = require('../../components/smartform');
 
-const BracketChart = require('../../components/bracket');
+const {
+  BracketPreview,
+} = require('../../components/bracket');
 
-const layout = [  //layout
-  [               //level
-    [null, null], //heat
-    null,
-    [null, null],
-    [null, null],
-    null,
-    null,
-    null,
-    null,
-  ],
-  [
-    [null, null],
-    [null, null],
-    null,
-    null,
-  ],
-  [
-    [null, null],
-    null,
-  ],
-  [
-    [],
-  ],
-  [
-  ]
-];
+const getLayoutFromString = (str)=>{
+  const f = new Function('', 'return '+str+';');
+  return f();
+};
 
-const data = [
+const raceTypes = [
   {
-    top: {
-      car: 101,
-      phase1: 0.125
-    },
-    bottom: {
-      car: 102,
-      phase2: 0.225
-    }
+    id: '',
+    caption: 'Custom'
   },
-  null,
-  null,
   {
-    top: {
-      car: 102
-    }
+    id: 'double',
+    caption: 'Double'
+  },
+  {
+    id: 'single',
+    caption: 'Single'
   },
 ];
-
-// END SETUP
-
-const racers = (()=>{
-    let participants = [];
-    let i;
-    for(i = 0; i<10; i++){
-      participants.push({
-          driver: `Participant ${i}`,
-          number: 101+i
-        });
-    }
-    return participants;
-  })();
 
 class Participant extends Component{
   render(){
-    const info = this.props.info;
-    const entrant = this.props.picker?
-        <ParticipantPicker participants={this.props.participants} selected={info.number} />:
-        <span>{info.driver} ({info.number})</span>;
     return (
-      <span>
-        {this.props.heat}){' '}
-        {entrant}
-        <span className="right">
-          <input type="text" className="phase-time" defaultValue={info.phase1||''} />
-          <input type="text" className="phase-time"  defaultValue={info.phase2||''} />
-        </span>
-      </span>
+      <span>{this.props.heat}) Participant</span>
     );
   }
-};
-
-class ParticipantPicker extends Component{
-  render(){
-    const options = this.props.participants.map((info, index)=>{
-      return <option key={index} value={info.number}>{info.driver+' ('+info.number+')'}</option>;
-    });
-    const label = this.props.heat?<span>{this.props.heat}){' '}</span>:'';
-    return (
-      <span className="picker">
-        {label}
-        <select defaultValue={this.props.selected}>{options}</select>
-      </span>
-    );
-  }
-};
-
-const isNumeric = (n)=>{
-  return !isNaN(parseFloat(n)) && isFinite(n);
-};
-
-const defaults = (...args)=>{
-  let res = {};
-  args.forEach((item)=>{
-    res = Object.keys(item).reduce((p, key)=>{
-      p[key] = item[key];
-      return p;
-    }, res);
-  });
-  return res;
 };
 
 const isEntryPoint = (options)=>{
@@ -135,43 +58,19 @@ const getParticipant = (carNumber, participants)=>{
   return cars.shift();
 };
 
-class Bracket extends Component{
+class BracketView extends Component{
   getRacerInfo(options){
     const heat = options.heat;
     const phase = options.data[heat-1];
     const participants = options.participants;
     const isEntry = isEntryPoint(options);
-    if(!phase){
-      if(isEntry){
-        return <ParticipantPicker participants={participants} heat={heat} />;
-      }
-      if(options.isFinal){
-        return <span className="empty-driver">TBD</span>;
-      }
-      return <span className="empty-driver">{heat}) TBD</span>;
-    }
-    const driverInfo = phase[options.placement];
-    if(!driverInfo){
-      if(isEntry){
-        return <ParticipantPicker participants={participants} heat={heat} />;
-      }
-      return <span className="empty-driver">{heat}) TBD</span>;
-    }
-    const carNumber = driverInfo.car;
-    const car = getParticipant(carNumber, participants);
-    if(!car){
-      return <ParticipantPicker participants={participants} heat={heat} />;
+    if(isEntry){
+      return <Participant participants={participants} heat={heat} />;
     }
     if(options.isFinal){
-      return {
-        display: `${car.driver} (${car.number})`
-      };
+      return <span className="empty-driver">TBD</span>;
     }
-    const details = defaults(car, {
-      phase1: driverInfo.phase1||'',
-      phase2: driverInfo.phase2||''
-    });
-    return <Participant participants={participants} info={details} heat={heat} picker={isEntry} />;
+    return <span className="empty-driver">{heat}) TBD</span>;
   }
 
   getHeatWinnerText(top, bottom, participants){
@@ -210,40 +109,111 @@ class Bracket extends Component{
       id,
       layout,
       bracket,
-      racers,
+      participants = [],
+      data = [],
     } = options;
-    if((id!==void 0)&&(!bracket)){
+    if((id!==false)&&(!bracket)){
       return <span>Loading ...</span>;
     }
     return (
+      <BracketPreview
+        className="bigger"
+        layout={layout}
+        bracket={bracket}
+        participants={participants}
+        data={data}
+        />
+    );
+  }
+
+  render(){
+    const id = this.props.id;
+    const bracket = this.props.brackets.filter((bracket)=>bracket.id === id).shift();
+    const layout = bracket?bracket.bracket||[]:[];
+    return bracket?this.getEditView({layout, bracket, ...this.props}):<span>Loading...</span>;
+  }
+};
+
+class Page extends Component{
+  constructor(props){
+    super(props);
+    this.state = {layout: false};
+  }
+
+  getView(){
+    const {
+      id = false,
+      brackets,
+    } = this.props;
+    const bracket = brackets.filter((bracket)=>bracket.id === id).shift();
+    const layout = this.state.layout||(bracket?bracket.bracket||[]:[]);
+    const action = id&&bracket?'Edit':'Create';
+    if((id!==false)&&(!bracket)){
+      return <span>Loading...</span>;
+    }
+    const fields = [
+      {
+        caption: 'Name:',
+        field: 'name',
+        type: 'text',
+      },
+      {
+        caption: 'Division:',
+        field: 'division',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Type:',
+        type: 'select',
+        field: 'type',
+        items: raceTypes,
+        required: true,
+      },
+      {
+        caption: 'Version:',
+        field: 'version',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Layout:',
+        type: 'textarea',
+        field: 'bracket',
+        default: [],
+        display: (value)=>JSON.stringify(value, null, '  '),
+        store: (value)=>getLayoutFromString(value),
+        onChange: (e, ref)=>{
+          try{
+            this.setState({layout: getLayoutFromString(ref.getValue())})
+          }catch(e){}
+        }
+      },
+    ];
+    return (
       <div>
-        <h2>Preview</h2>
-        <BracketChart
-          className="bigger"
-          layout={layout}
-          bracket={bracket}
-          participants={racers}
-          data={[]}
-          getParticipant={this.getRacerInfo}
-          getFiller={this.getFiller.bind(this)}
+        <SmartForm
+          fields={fields}
+          data={bracket}
+          title={`${action} Bracket`}
+          ref="form"
+          onUpdate={(data, callback)=>this.props.onSave(data, callback)}
+          onInsert={(data, callback)=>this.props.onInsert(data, callback)}
+          onSuccess={()=>this.context.router.push('/brackets')}
           />
+        <h2>Preview</h2>
+        <BracketView id={id} layout={layout} {...this.props} />
       </div>
     );
   }
 
   render(){
-    const id = this.props.params.id;
-    const bracket = this.props.brackets.filter((bracket)=>bracket.id === id).shift();
-    const layout = bracket?bracket.bracket||[]:[];
-    const chart = this.getEditView({id, layout, bracket, racers});
-    const action = id?'Edit':'New';
-    return (
-      <div>
-        <h1>{action} Bracket</h1>
-        {chart}
-      </div>
-    );
+    return this.getView();
   }
+}
+
+Page.contextTypes = {
+  router: React.PropTypes.object,
 };
 
 const mapStateToProps = (state, ownProps) => {
@@ -253,4 +223,23 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-module.exports = connect(mapStateToProps)(Bracket);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onSave: (event, callback)=>{
+      store.updateRecord({
+        type: 'BRACKET',
+        endpoint: 'brackets',
+        data: event
+      }, callback);
+    },
+    onInsert: (event, callback)=>{
+      store.addRecord({
+        type: 'BRACKET',
+        endpoint: 'brackets',
+        data: event
+      }, callback);
+    },
+  };
+};
+
+module.exports = connect(mapStateToProps, mapDispatchToProps)(Page);

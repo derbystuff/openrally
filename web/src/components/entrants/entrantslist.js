@@ -55,7 +55,7 @@ class EntrantsList extends React.Component{
       givenName: racer.givenName,
       familyName: racer.familyName,
       nickName: racer.nickName,
-      divisionNumber: divisionNumber===false?null:divisionNumber,
+      divisionNumber: divisionNumber===false?undefined:divisionNumber,
     };
     const entrants = uniq(this.state.entrants.concat([entrant]));
     return this.setState({

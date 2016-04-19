@@ -25,9 +25,14 @@ const defaults = (...args)=>{
 };
 
 class Bracket extends Component{
+  constructor(props){
+    super(props);
+    this.state = Object.assign({}, props);
+  }
+
   getParticipant(info){
     if(this.props.getParticipant){
-      const control = this.props.getParticipant(defaults(info, {participants: this.props.participants, data: this.props.data, layout: this.props.layout}));
+      const control = this.props.getParticipant(defaults(info, {participants: this.state.participants, data: this.state.data, layout: this.state.layout}));
       return <span className="participant" key={info.key}>{control}</span>;
     }
     return <span className="participant">getParticipant property not defined</span>;
@@ -93,7 +98,7 @@ class Bracket extends Component{
 
   getFiller(options){
     if(this.props.getFiller){
-      return <div className="filler">{this.props.getFiller(defaults(options, {participants: this.props.participants, data: this.props.data, layout: this.props.layout}))}</div>;
+      return <div className="filler">{this.props.getFiller(defaults(options, {participants: this.state.participants, data: this.state.data, layout: this.state.layout}))}</div>;
     }
     return <div className="filler"></div>;
   }
@@ -133,8 +138,12 @@ class Bracket extends Component{
     );
   }
 
+  componentWillReceiveProps(newProps){
+    this.setState(newProps);
+  }
+
   render(){
-    let layout = this.props.layout || [];
+    let layout = this.state.layout || [];
     let heatNum = 1;
     const lastHeat = layout.length-1;
     const rounds = layout.map((heats, key)=>{

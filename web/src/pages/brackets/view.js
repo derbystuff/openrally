@@ -5,78 +5,13 @@ const {
 const {
   connect,
 } = require('react-redux');
+const {
+  Link,
+} = require('react-router');
 
-const BracketChart = require('../../components/bracket');
-
-const layout = [ //layout
-  [ //level
-    [null, null], //heat
-    null,
-    [null, null],
-    [null, null],
-    null,
-    null,
-    null,
-    null,
-  ],
-  [
-    [null, null],
-    [null, null],
-    null,
-    null,
-  ],
-  [
-    [null, null],
-    null,
-  ],
-  [
-    [],
-  ],
-  [
-  ]
-];
-
-// END SETUP
-
-const racers = (()=>{
-    let participants = [];
-    let i;
-    for(i = 0; i<10; i++){
-      participants.push({
-          driver: 'Participant '+i,
-          number: 101+i
-        });
-    }
-    return participants;
-  })();
-
-class ParticipantPicker extends Component{
-  render(){
-    const {
-      heat
-    } = this.props;
-    return (
-      <span>
-        {heat}) Participant
-      </span>
-    );
-  }
-};
-
-const isNumeric = (n)=>{
-  return !isNaN(parseFloat(n)) && isFinite(n);
-};
-
-const defaults = (...args)=>{
-  let res = {};
-  args.forEach((item)=>{
-    res = Object.keys(item).reduce((p, key)=>{
-      p[key] = item[key];
-      return p;
-    }, res);
-  });
-  return res;
-};
+const {
+  BracketPreview,
+} = require('../../components/bracket');
 
 const isEntryPoint = (options)=>{
   if(options.level===0){
@@ -87,43 +22,24 @@ const isEntryPoint = (options)=>{
   return isEntry;
 };
 
-const getParticipant = (carNumber, participants)=>{
-  const cars = participants.filter((entry)=>{
-    return entry.number === carNumber;
-  });
-  return cars.shift();
+class Participant extends Component{
+  render(){
+    return (
+      <span>{this.props.heat}) Participant</span>
+    );
+  }
 };
 
-class Bracket extends Component{
-  getRacerInfo(options){
-    const heat = options.heat;
-    const participants = options.participants;
-    const isEntry = isEntryPoint(options);
-    if(isEntry){
-      return <ParticipantPicker participants={participants} heat={heat} />;
-    }
-    if(options.isFinal){
-      return <span className="empty-driver">Final</span>;
-    }
-    return <span className="empty-driver">{heat}) TBD</span>;
-  }
-
+class Page extends Component{
   render(){
-    const id = this.props.params.id;
-    const bracket = this.props.brackets.filter((bracket)=>bracket.id === id).shift();
-    const layout = bracket?bracket.bracket||[]:[];
-    const chart = bracket?<BracketChart
-              className="bigger"
-              layout={layout}
-              data={[]}
-              bracket={bracket}
-              participants={racers}
-              getParticipant={this.getRacerInfo}
-              />:<span>Loading ...</span>;
+    const {
+      id,
+    } = this.props;
     return (
       <div>
-        <h1>View Bracket {this.props.params.id}</h1>
-        {chart}
+        <h1>View Bracket {id}</h1>
+        <BracketPreview {...this.props} />
+        <Link className="btn btn-warning" to={`/brackets/${id}/edit`}>Edit</Link>
       </div>
     );
   }
@@ -136,4 +52,4 @@ const mapStateToProps = (state, ownProps) => {
   };
 };
 
-module.exports = connect(mapStateToProps)(Bracket);
+module.exports = connect(mapStateToProps)(Page);

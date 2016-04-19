@@ -2,91 +2,74 @@ const React = require('react');
 const {
   connect,
 } = require('react-redux');
-const {
-  LabeledDatePicker,
-  LabeledInput,
-  LabeledTextarea,
-} = require('../../components/editors');
-const {
-  LabeledItem,
-} = require('../../components/labeledlist');
-const {
-  Link,
-} = require('react-router');
 const store = require('../../reducers');
+const {
+  SmartForm
+} = require('../../components/smartform');
 
-class EditEvent extends React.Component{
-  getEventData(){
-    const id = this.props.id || false;
-    const divisions = (this.refs.divisions.getValue()||'').split(',').map(s=>s.trim().toLowerCase()).filter(s=>!!s);
-
-    return {
-      id,
-      startDate: this.refs.startDate.getValue(),
-      endDate: this.refs.endDate.getValue(),
-      title: this.refs.title.getValue(),
-      description: this.refs.description.getValue(),
-      location: this.refs.location.getValue(),
-      divisions,
-    }
-  }
-
-  saveChanges(e){
-    e&&e.preventDefault();
-    const id = this.props.id || false;
-    if(id && this.props.onSave){
-      this.props.onSave(this.getEventData(), (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/events');
-      });
-    }
-    if(!id && this.props.onRegister){
-      this.props.onRegister(this.getEventData(), (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/events');
-      });
-    }
-
-  }
-
-  editForm(options){
+class EditEvent  extends React.Component{
+  getEditForm(event){
     const {
-      id,
-      event = {}
-    } = options;
-    if(id&&(Object.keys(event).length===0)){
-      return <span>Loading...</span>;
-    }
+      id = false,
+    } = event;
+    const action = id&&event?'Edit':'Create';
+    const fields = [
+      {
+        caption: 'Start Date:',
+        type: 'date',
+        field: 'startDate',
+        required: true,
+      },
+      {
+        caption: 'End Date:',
+        type: 'date',
+        field: 'endDate',
+        required: true,
+      },
+      {
+        caption: 'Title:',
+        field: 'title',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Description:',
+        field: 'description',
+        type: 'textarea',
+      },
+      {
+        caption: 'Divisions:',
+        field: 'divisions',
+        type: 'text',
+        required: true,
+        default: [],
+        display: (value)=>value.join(', '),
+        store: (value)=>value.split(',').map(s=>s.trim()).filter(s=>!!s),
+      },
+      {
+        caption: 'Location:',
+        field: 'location',
+        type: 'textarea',
+      },
+    ];
     return (
-      <form onSubmit={this.saveChanges}>
-        <div className="form-group">
-          <LabeledDatePicker label="Start Date:" value={event.startDate} ref="startDate" />
-          <LabeledDatePicker label="End Date:" value={event.endDate} ref="endDate" />
-          <LabeledInput label="Title:" value={event.title} ref="title" />
-          <LabeledTextarea label="Description:" value={event.description} ref="description" />
-          <LabeledInput label="Divisions:" value={(event.divisions||[]).join(',')} ref="divisions" />
-          <LabeledTextarea label="Location:" value={event.location} ref="location" />
-        </div>
-        <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
-      </form>
+      <SmartForm
+        fields={fields}
+        data={event}
+        title={`${action} Event`}
+        ref="form"
+        onUpdate={(data, callback)=>this.props.onSave(data, callback)}
+        onInsert={(data, callback)=>this.props.onInsert(data, callback)}
+        onSuccess={()=>this.context.router.push('/events')}
+        />
     );
   }
 
   render(){
     const id = this.props.id || false;
-    const events = this.props.events.filter((event)=>event.id===id);
+    const events = this.props.events.filter((racer)=>racer.id===id);
     const event = events.shift();
-    const action = id&&event?'Edit':'New';
-    return (
-      <div>
-        <h1>{action} Event</h1>
-        {this.editForm({id, event})}
-      </div>
-    );
+    return event||(id===false)?this.getEditForm(event||{}):<span>Loading...</span>;
   }
 };
 
@@ -110,7 +93,7 @@ const mapDispatchToProps = (dispatch) => {
         data: event
       }, callback);
     },
-    onRegister: (event, callback)=>{
+    onInsert: (event, callback)=>{
       store.addRecord({
         type: 'EVENT',
         endpoint: 'events',

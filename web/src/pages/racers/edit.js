@@ -3,16 +3,6 @@ const {
   Component
 } = React;
 const {
-  LabeledInput,
-  LabeledTextarea,
-} = require('../../components/editors');
-const {
-  LabeledItem,
-} = require('../../components/labeledlist');
-const {
-  Link,
-} = require('react-router');
-const {
   connect,
 } = require('react-redux');
 const store = require('../../reducers');
@@ -113,7 +103,7 @@ class EditRacer extends Component{
         title={`${action} Racer`}
         ref="form"
         onUpdate={(data, callback)=>this.props.onSave(data, callback)}
-        onInsert={(data, callback)=>this.props.onSave(data, callback)}
+        onInsert={(data, callback)=>this.props.onRegister(data, callback)}
         onSuccess={()=>this.context.router.push('/racers')}
         />
     );

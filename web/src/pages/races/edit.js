@@ -3,22 +3,12 @@ const {
   connect,
 } = require('react-redux');
 const {
-  LabeledDatePicker,
-  LabeledInput,
-  LabeledTextarea,
-  LabeledSelect,
-  LabeledCheckbox,
-} = require('../../components/editors');
-const {
   EntrantsList
 } = require('../../components/entrants');
-const {
-  LabeledItem,
-} = require('../../components/labeledlist');
-const {
-  Link,
-} = require('react-router');
 const store = require('../../reducers');
+const {
+  SmartForm
+} = require('../../components/smartform');
 
 const raceTypes = [
   {
@@ -62,125 +52,96 @@ const raceClasses = [
 ];
 
 class EditRace extends React.Component{
-  constructor(props){
-    super(props);
-    this.state = {event: this.getEvent(props)};
-  }
-
-  getEvent(fromProps, newEventId){
-    const props = fromProps || this.props;
-    const id = props.id || false;
-    const race = props.races.filter((race)=>race.id===id).shift();
-    const eventId = newEventId || (this.state||{}).eventId || (race||{}).eventId || false;
-    const event = props.events.filter((event)=>event.id===eventId).shift();
-    return event;
-  }
-
-  componentWillReceiveProps(newProps){
-    this.checkSetEvent(newProps);
-  }
-
-  checkSetEvent(fromProps, newEventId){
-    this.setState({event: this.getEvent(Object.assign({}, this.props, fromProps), newEventId)})
-  }
-
-  getRaceData(){
-    const id = this.props.id || false;
-
-    return {
-      id,
-      eventId: this.refs.eventId.getValue(),
-      date: this.refs.date.getValue(),
-      title: this.refs.title.getValue(),
-      type: this.refs.type.getValue(),
-      class: this.refs.class.getValue(),
-      consolation: this.refs.consolation.getValue(),
-      entrants: this.refs.entrants.getEntrants(),
-    }
-  }
-
-  saveChanges(e){
-    e&&e.preventDefault();
-    const id = this.props.id || false;
-    const race = this.getRaceData();
-    if(id && this.props.onSave){
-      this.props.onSave(race, (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/races');
-      });
-    }
-    if(!id && this.props.onRegister){
-      this.props.onRegister(race, (err, record)=>{
-        if(err){
-          return;
-        }
-        this.context.router.push('/races');
-      });
-    }
-
-  }
-
-  changeEvent(e){
-    e&&e.preventDefault();
-    this.checkSetEvent({}, this.refs.eventId.getValue());
-  }
-
-  editForm(options){
+  getEditForm(options){
     const {
-      id,
-      race = {},
-      racers = [],
-      events = false,
+      race,
+      events,
+      racers,
     } = options;
-    if(!events){
-      return <span>Loading...</span>;
-    }
-    if(id&&(Object.keys(race).length===0)){
-      return <span>Loading...</span>;
-    }
-    const event = this.state.event;
+    const {
+      id = false
+    } = race;
     const divisions = (event||{}).divisions||[];
-
+    const action = id&&race?'Edit':'New';
+/*
+<LabeledSelect label="Event:" value={race.eventId} items={events} ref="eventId" onChange={this.changeEvent.bind(this)} />
+<LabeledDatePicker label="Date:" value={race.date} ref="date" />
+<LabeledSelect label="Type:" value={race.type} items={raceTypes} ref="type" />
+<LabeledSelect label="Class:" value={race.class} items={raceClasses} ref="class" />
+<LabeledInput label="Title:" value={race.title} ref="title" />
+<LabeledCheckbox label="Consolation:" value={race.consolation} ref="consolation" />
+<EntrantsList entrants={race.entrants} racers={racers} divisions={divisions} ref="entrants" />
+*/
+    const fields = [
+      {
+        caption: 'Event:',
+        type: 'select',
+        field: 'eventId',
+        items: events,
+        required: true,
+      },
+      {
+        caption: 'Date:',
+        type: 'date',
+        field: 'date',
+        required: true,
+      },
+      {
+        caption: 'Type:',
+        type: 'select',
+        field: 'type',
+        items: raceTypes,
+        required: true,
+      },
+      {
+        caption: 'Class:',
+        type: 'select',
+        field: 'class',
+        items: raceClasses,
+        required: true,
+      },
+      {
+        caption: 'Title:',
+        field: 'title',
+        type: 'text',
+        required: true,
+      },
+      {
+        caption: 'Consolation:',
+        field: 'consolation',
+        type: 'checkbox',
+      },
+      {
+        caption: 'Entrants',
+        field: 'entrants',
+        type: 'custom',
+        render: (key, ref, value)=>{
+          return <EntrantsList key={key} entrants={value} racers={racers} divisions={divisions} ref={ref} />;
+        },
+        getValue: (ref)=>{
+          return ref.getEntrants();
+        }
+      }
+    ];
     return (
-      <form onSubmit={this.saveChanges}>
-        <div className="form-group">
-          <LabeledSelect label="Event:" value={race.eventId} items={events} ref="eventId" onChange={this.changeEvent.bind(this)} />
-          <LabeledDatePicker label="Date:" value={race.date} ref="date" />
-          <LabeledSelect label="Type:" value={race.type} items={raceTypes} ref="type" />
-          <LabeledSelect label="Class:" value={race.class} items={raceClasses} ref="class" />
-          <LabeledInput label="Title:" value={race.title} ref="title" />
-          <LabeledCheckbox label="Consolation:" value={race.consolation} ref="consolation" />
-          <EntrantsList entrants={race.entrants} racers={racers} divisions={divisions} ref="entrants" />
-          <ul>
-            <li>bracket</li>
-            <ul>
-              <li>id</li>
-              <li>version</li>
-              <li>heats</li>
-              <li>layout</li>
-            </ul>
-          </ul>
-        </div>
-        <Link className="btn btn-primary" to={`/racers/${id}/edit`} onClick={this.saveChanges.bind(this)}>Save</Link>
-      </form>
+      <SmartForm
+        fields={fields}
+        data={race}
+        title={`${action} Race`}
+        ref="form"
+        onUpdate={(data, callback)=>this.props.onSave(data, callback)}
+        onInsert={(data, callback)=>this.props.onInsert(data, callback)}
+        onSuccess={()=>this.context.router.push('/races')}
+        />
     );
   }
-
   render(){
     const id = this.props.id || false;
     const racers = this.props.racers;
     const events = this.props.events.map((event)=>{return {id: event.id, caption: event.title||(`${event.startDate}->${event.endDate}`), divisions: event.divisions}});
     const races = this.props.races.filter((race)=>race.id===id);
     const race = races.shift();
-    const action = id&&race?'Edit':'New';
-    return (
-      <div>
-        <h1>{action} race</h1>
-        {this.editForm({id, race, events, racers})}
-      </div>
-    );
+    return (race||(id===false))&&(events)?this.getEditForm({race, events, racers}):<span>Loading...</span>;
   }
 };
 
@@ -206,7 +167,7 @@ const mapDispatchToProps = (dispatch) => {
         data: race
       }, callback);
     },
-    onRegister: (race, callback)=>{
+    onInsert: (race, callback)=>{
       store.addRecord({
         type: 'RACE',
         endpoint: 'races',

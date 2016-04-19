@@ -37,6 +37,9 @@ class Listing extends React.Component{
         href: '/events/${id}/edit',
         className: 'warning'
       },
+      Participants:{
+        href: '/events/${id}/participants',
+      },
     };
     return (
       <Page title="Events Listing" newLink="/events/new" headers={headers} rowmap={rowmap} data={this.props.events} actions={actions}/>

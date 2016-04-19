@@ -96,12 +96,14 @@ class Listing extends React.Component{
   render(){
     const headers = [
       'ID',
+      'Name',
       'Division',
       'Version',
       '# Entrants',
     ];
     const rowmap = [
       (row)=>row.id,
+      (row)=>row.name,
       (row)=>row.division,
       (row)=>row.version,
       (row)=>calcNumEntrants(row.bracket)

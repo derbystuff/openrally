@@ -29,9 +29,9 @@ class Listing extends React.Component{
       (row)=>row.class,
     ];
     const actions = {
-      View: '/races/${id}',
+      View: '/heats/${id}',
       Edit:{
-        href: '/races/${id}/edit',
+        href: '/heats/${id}/edit',
         className: 'warning'
       },
     };

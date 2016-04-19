@@ -54,6 +54,7 @@ console.log(this.props)
     } = event;
     const strStartDate = formatDate(startDate);
     const strEndDate = formatDate(endDate);
+    const participants = [];
 
     const racesHeaders = [
       'ID',
@@ -70,6 +71,17 @@ console.log(this.props)
       (row)=>row.consolation?`${TYPE_LOOKUP[row.type]} Consolation`:TYPE_LOOKUP[row.type],
     ];
 
+    const participantsHeaders = [
+      'ID',
+      'Name',
+      'Races',
+    ];
+
+    const participantsRowmap = [
+      (row)=>row.id,
+      (row)=>row.name,
+    ];
+
     return (
       <div>
         <h1>View Event</h1>
@@ -84,12 +96,20 @@ console.log(this.props)
           <LabeledItem label="Location:" value={location} hideIfNone={true} />
         </LabeledList>
 
+        <h2>Participants</h2>
+        <SmartTable
+          headers={participantsHeaders}
+          rowmap={participantsRowmap}
+          data={participants}
+          />
+
         <h2>Races</h2>
         <SmartTable
           headers={racesHeaders}
           rowmap={racesRowmap}
           data={races}
           />
+
 
         <Link className="btn btn-warning" to={`/events/${id}/edit`}>Edit</Link>
       </div>
