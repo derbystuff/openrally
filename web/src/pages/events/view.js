@@ -40,7 +40,6 @@ class ViewEvent extends Component{
     const {
       id = false,
     } = this.props;
-console.log(this.props)
     const events = this.props.events.filter((event)=>event.id===id);
     const races = this.props.races.filter((race)=>race.eventId===id);
     const event = events.shift()||{};
@@ -55,6 +54,20 @@ console.log(this.props)
     const strStartDate = formatDate(startDate);
     const strEndDate = formatDate(endDate);
 
+    const entrants = races.reduce((racers, race)=>{
+        const entrants = (race.entrants||[]).forEach((entrant)=>{
+          const entry = racers[entrant.id] = racers[entrant.id] || Object.assign({races: []}, entrant);
+          entry.races.push({
+            id: race.id,
+            title: race.title,
+            paid: !!entrant.paid,
+          });
+        });
+        return racers;
+      },
+      {});
+    const participants = Object.keys(entrants).map((key)=>entrants[key]);
+
     const racesHeaders = [
       'ID',
       'Date',
@@ -62,12 +75,27 @@ console.log(this.props)
       'Class',
       'Type',
     ];
+
     const racesRowmap = [
       (row)=>row.id,
       (row)=>formatDate(row.date),
       (row)=>row.title,
       (row)=>CLASS_LOOKUP[row.class],
       (row)=>row.consolation?`${TYPE_LOOKUP[row.type]} Consolation`:TYPE_LOOKUP[row.type],
+    ];
+
+    const participantsHeaders = [
+      'ID',
+      'Name',
+      'Races',
+    ];
+
+    const participantsRowmap = [
+      (row)=>row.id,
+      (row)=>row.nickName?`${row.familyName}, ${row.givenName} (${row.nickName})`:`${row.familyName}, ${row.givenName}`,
+      (row)=>row.races.map((r)=>{
+        return <div key={r.id}>{r.title} {r.paid?'Paid':'NOT PAID'}</div>
+      }),
     ];
 
     return (
@@ -83,6 +111,13 @@ console.log(this.props)
           <LabeledItem label="Divisions:" value={(divisions||[]).join(', ').toUpperCase()} hideIfNone={true} />
           <LabeledItem label="Location:" value={location} hideIfNone={true} />
         </LabeledList>
+
+        <h2>Participants</h2>
+        <SmartTable
+          headers={participantsHeaders}
+          rowmap={participantsRowmap}
+          data={participants}
+          />
 
         <h2>Races</h2>
         <SmartTable

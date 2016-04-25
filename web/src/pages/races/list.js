@@ -48,7 +48,7 @@ class Listing extends React.Component{
     ];
     const actions = {
       View: '/races/${id}',
-      Edit:{
+      Edit: {
         href: '/races/${id}/edit',
         className: 'warning'
       },

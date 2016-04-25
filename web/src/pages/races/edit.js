@@ -60,18 +60,9 @@ class EditRace extends React.Component{
     } = options;
     const {
       id = false
-    } = race;
+    } = race || {};
     const divisions = (event||{}).divisions||[];
     const action = id&&race?'Edit':'New';
-/*
-<LabeledSelect label="Event:" value={race.eventId} items={events} ref="eventId" onChange={this.changeEvent.bind(this)} />
-<LabeledDatePicker label="Date:" value={race.date} ref="date" />
-<LabeledSelect label="Type:" value={race.type} items={raceTypes} ref="type" />
-<LabeledSelect label="Class:" value={race.class} items={raceClasses} ref="class" />
-<LabeledInput label="Title:" value={race.title} ref="title" />
-<LabeledCheckbox label="Consolation:" value={race.consolation} ref="consolation" />
-<EntrantsList entrants={race.entrants} racers={racers} divisions={divisions} ref="entrants" />
-*/
     const fields = [
       {
         caption: 'Event:',
@@ -116,7 +107,7 @@ class EditRace extends React.Component{
         field: 'entrants',
         type: 'custom',
         render: (key, ref, value)=>{
-          return <EntrantsList key={key} entrants={value} racers={racers} divisions={divisions} ref={ref} />;
+          return <EntrantsList key={key} entrants={value} racers={racers} divisions={divisions} ref={ref} editable={true} />;
         },
         getValue: (ref)=>{
           return ref.getEntrants();
@@ -168,6 +159,7 @@ const mapDispatchToProps = (dispatch) => {
       }, callback);
     },
     onInsert: (race, callback)=>{
+      console.log('race', race)
       store.addRecord({
         type: 'RACE',
         endpoint: 'races',

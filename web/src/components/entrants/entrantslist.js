@@ -12,6 +12,16 @@ class EntrantsList extends React.Component{
     };
   }
 
+  updatePaid(racerId, paid){
+    const entrants = this.state.entrants.map((entrant)=>{
+      if(entrant.id === racerId){
+        return Object.assign({}, entrant, {paid});
+      }
+      return entrant;
+    });
+    this.setState({entrants});
+  }
+
   getEntrants(){
     return this.state.entrants;
   }
@@ -55,6 +65,7 @@ class EntrantsList extends React.Component{
       givenName: racer.givenName,
       familyName: racer.familyName,
       nickName: racer.nickName,
+      paid: racer.yearlyMembership || false,
       divisionNumber: divisionNumber===false?undefined:divisionNumber,
     };
     const entrants = uniq(this.state.entrants.concat([entrant]));
@@ -83,7 +94,7 @@ class EntrantsList extends React.Component{
       <div>
         <h2>{this.props.heading||'Entrants'}</h2>
         {tools}
-        <EntrantsListTable {...data} actions={actions} />
+        <EntrantsListTable {...data} actions={actions} editable={!!this.props.editable} onUpdatePaid={this.updatePaid.bind(this)} />
         {tools}
       </div>
     );

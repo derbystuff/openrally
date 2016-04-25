@@ -5,4 +5,5 @@ module.exports = {
   Select: require('./select'),
   LabeledSelect: require('./labeledselect'),
   LabeledCheckbox: require('./labeledcheckbox'),
+  Checkbox: require('./checkbox'),
 };

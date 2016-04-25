@@ -10,7 +10,7 @@ module.exports = {
   devtool: false,
   entry:   [
     path.resolve(__dirname, "../web/src/app"),
-    'webpack-hot-middleware/client?path=http://localhost:8080/__webpack_hmr',
+    'webpack-hot-middleware/client?path=http://localhost:9090/__webpack_hmr',
   ],
   output:  {
     path:          path.resolve(__dirname, "../web/site"),

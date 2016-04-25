@@ -17,6 +17,7 @@ const builder = new Builder({
       nickName: Joi.string().optional().allow(''),
       divisionNumber: Joi.number().optional().allow('').allow(null),
       carNumber: Joi.number().optional().allow(''),
+      paid: Joi.boolean().default(false),
     })).optional().allow(null),
     bracket: Joi.object().keys({
       id: Joi.string().allow(''),

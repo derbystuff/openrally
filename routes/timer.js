@@ -1,4 +1,6 @@
 const timer = require('../lib/timer');
+const config = require('../lib/config');
+const logger = require('../lib/logger');
 
 const handleGetLastWinner = (req, reply)=>{
   return reply(timer.lastWinner());
@@ -26,8 +28,19 @@ const handleConfigTimer = (req, reply)=>{
   if(timer.connected()){
     return reply(new Error('Timer currently connected, must disconnect before configuration.'));
   }
-  timer.config(req.payload);
-  return reply('ok');
+  config.set('TIMER', req.payload, (err, config)=>{
+    if(err){
+      logger.error(err);
+      return reply(err);
+    }
+    logger.info(config);
+    timer.config(config);
+    return reply(config);
+  });
+};
+
+const handleGetConfigTimer = (req, reply)=>{
+  return reply(config.get('TIMER'));
 };
 
 const handleTimerStatus = (req, reply)=>{
@@ -79,8 +92,16 @@ module.exports = [
     }
   },
   {
-    method: 'POST',
-    path: '/api/v1/timer',
+    method: 'GET',
+    path: '/api/v1/timer/config',
+    config: {
+      tags: ['api'],
+      handler: handleGetConfigTimer
+    }
+  },
+  {
+    method: 'PUT',
+    path: '/api/v1/timer/config',
     config: {
       tags: ['api'],
       handler: handleConfigTimer

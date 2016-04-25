@@ -149,15 +149,17 @@ class SmartForm extends React.Component{
   handleSubmit(e){
     e&&e.preventDefault();
     const data = this.getFormData();
-    const id = data.id;
+    const {
+      id = false,
+    } = data;
     if(this.props.onSubmit){
       this.props.onSubmit(data);
     }
     if((id !== false) && this.props.onUpdate){
       return this.props.onUpdate(data, this.handleDone.bind(this));
     }
-    if((id === false) && this.props.onCreate){
-      return this.props.onUpdate(data, this.handleDone.bind(this));
+    if((id === false) && this.props.onInsert){
+      return this.props.onInsert(data, this.handleDone.bind(this));
     }
   }
 
