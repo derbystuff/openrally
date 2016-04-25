@@ -2,9 +2,5 @@
 
 'use strict';
 
-require('../dist/setup');
-/*
-var Commands = require('../dist/commands').Commands;
-var commands = new Commands(process.argv);
-commands.execute(process.argv);
-*/
+require('babel-register');
+require('../lib/setup');

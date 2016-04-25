@@ -9,11 +9,11 @@
   "scripts": {
     "dev": "rm -rf ./web/site/; nodemon ./bin/racemasterdev --hot",
     "test": "lab --transform ./test/setup.js --ignore 'Reflect,core,_babelPolyfill,regeneratorRuntime,__core-js_shared__'",
-    "compile-ui": "NODE_ENV=production rm -rf web/site/; webpack --colors --display-error-details --config configs/webpack.client.js",
-    "compile-server": "rm -rf dist/; babel -d dist/ lib/",
-    "compile": "npm run compile-server; npm run compile-ui",
+    "compile-ui": "rm -rf web/site/; NODE_ENV=production webpack --colors --display-error-details --config configs/webpack.client.js",
+    "compile": "npm run compile-ui",
     "preuninstall": "rm -rf dist/; rm -rf web/site/",
-    "install": "npm run compile"
+    "install": "npm run compile",
+    "start": "NODE_ENV=production ./bin/racemaster"
   },
   "dependencies": {
     "async": "^1.5.2",
