@@ -40,6 +40,8 @@ const ListEvents = require('../pages/events/list');
 const EditEvent = require('../pages/events/edit');
 const EventParticipants = require('../pages/events/participants');
 
+const Overview = require('../pages/overview/view');
+
 const { Provider } = require('react-redux');
 const store = require('../reducers');
 
@@ -91,6 +93,7 @@ module.exports = React.createClass({
             <Route path="timer" component={ViewTimer} />
             <Route path="about" component={About} />
             <Route path="contact" component={Contact} />
+            <Route path="overview" component={Overview} />
             <Route path="*" component={PageNotFound} />
           </Route>
         </Router>

@@ -1,7 +1,6 @@
 {
   WEB: {
-    HOST: 'localhost',
-    PORT: 9090
+    PORT: 8080
   },
   TIMER: {
     DRIVER: 'twotimeriii',

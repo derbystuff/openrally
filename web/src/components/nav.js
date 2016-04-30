@@ -42,6 +42,7 @@ module.exports = React.createClass({
           <NavLink to="/races">Races</NavLink>
           <NavLink to="/heats">Heats</NavLink>
           <NavLink to="/timer">Timer</NavLink>
+          <NavLink to="/overview">Overview</NavLink>
           {/*<NavLink to="/about">About</NavLink>*/}
           {/*<NavLink to="/contact">Contact</NavLink>*/}
         </Nav>
