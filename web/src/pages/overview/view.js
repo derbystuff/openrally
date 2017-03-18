@@ -19,7 +19,7 @@ class Page extends Component{
           <TimerView />
         </Col>
         <Col xs={12} md={8}>
-          <iframe width="640px" height="480px" src={videoOrigin}>
+          <iframe width="640px" height="480px" frameBorder="0" src={videoOrigin}>
           </iframe>
         </Col>
       </Row>
